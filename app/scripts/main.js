@@ -1,2 +1,5 @@
 /* jshint devel:true */
-console.log('\'Allo \'Allo!');
+;(function(window, document, undefined) {
+  'use strict';
+
+})(window, document);

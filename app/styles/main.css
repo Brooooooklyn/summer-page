@@ -61,4 +61,71 @@ body {
   display: block;
   width: 100%;
   height: 100%;
+  min-height: 568px;
+}
+
+.page{
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+.has-triangle-wrap{
+  height: 100%;
+}
+.has-triangle-bg{
+  height: 58.3%;
+  background: url(../images/page1_triangle.png);
+  background-size: cover;
+  background-position: center bottom;
+}
+.has-triangle-bg .art-text{
+  width: 200px;
+  height: 193px;
+  background: url(../images/page1_art_text.png);
+  background-size: cover;
+  position: relative;
+  left: 35px;
+  top: 35px;
+}
+.has-triangle-bg .shooes{
+  background: url(../images/page1_shooes.png);
+  width: 21%;
+  height: 12%;
+  background-size: cover;
+  position: absolute;
+  right: 25px;
+  top: 50%;
+}
+.has-triangle-footer{
+  height: 41.7%;
+  background: url(../images/page1_footer.png);
+  background-size: cover;
+  background-position: center top;
+}
+.has-triangle-footer .text{
+  position: relative;
+  top: -15%;
+}
+.has-triangle-footer .text div{
+  display: block;
+  position: relative;
+  left: 20px;
+  font-size: 1.8em;
+  color: white;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+.has-triangle-footer .logo{
+  background: url(../images/page1_logo.png);
+  width: 170px;
+  height: 25px;
+  top: -15%;
+  background-size: cover;
+  background-position: center bottom;
+  position: relative;
+  left: 25px;
 }

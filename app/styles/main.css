@@ -72,6 +72,7 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
+  display: none;
 }
 .has-triangle-wrap{
   height: 100%;
@@ -93,12 +94,12 @@ body {
 }
 .has-triangle-bg .shooes{
   background: url(../images/page1_shooes.png);
-  width: 21%;
-  height: 12%;
+  width: 80px;
+  height: 81px;
   background-size: cover;
   position: absolute;
   right: 25px;
-  top: 50%;
+  top: 51%;
 }
 .has-triangle-footer{
   height: 41.7%;
@@ -128,4 +129,14 @@ body {
   background-position: center bottom;
   position: relative;
   left: 25px;
+}
+.page2-header{
+  height: 15%;
+}
+.page2-header .page2-header-color{
+  height: 100%;
+  background: rgb(178,105,151);
+}
+.page2-header .page2-header-shape{
+  
 }

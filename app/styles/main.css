@@ -130,13 +130,21 @@ body {
   position: relative;
   left: 25px;
 }
-.page2-header{
+.page-header{
   height: 15%;
 }
 .page2-header .page2-header-color{
   height: 100%;
-  background: rgb(178,105,151);
+  background: rgb(53, 158, 211);
 }
-.page2-header .page2-header-shape{
-  
+.page-header .page-header-shape{
+  background: url(../images/page2_header.png);
+  height: 100%;
+  position: relative;
+  bottom: 12px;
+  background-repeat: repeat-x;
+}
+.page3-header .page3-header-color{
+  height: 100%;
+  background: rgb(178,105,151);
 }

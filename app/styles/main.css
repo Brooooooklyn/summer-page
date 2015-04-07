@@ -62,6 +62,7 @@ body {
   width: 100%;
   height: 100%;
   min-height: 568px;
+  overflow: hidden;
 }
 
 .page{
@@ -78,7 +79,7 @@ body {
   height: 100%;
 }
 .has-triangle-bg{
-  height: 58.3%;
+  height: 58%;
   background: url(../images/page1_triangle.png);
   background-size: cover;
   background-position: center bottom;
@@ -93,7 +94,7 @@ body {
   top: 35px;
 }
 .has-triangle-bg .shooes{
-  background: url(../images/page1_shooes.png);
+  background: url(../images/page1_shoes.png);
   width: 80px;
   height: 81px;
   background-size: cover;
@@ -102,7 +103,7 @@ body {
   top: 51%;
 }
 .has-triangle-footer{
-  height: 41.7%;
+  height: 42%;
   background: url(../images/page1_footer.png);
   background-size: cover;
   background-position: center top;
@@ -148,7 +149,94 @@ body {
   height: 100%;
   background: rgb(178,105,151);
 }
-.page2-header .page2-header-shape{
+.page4{
+  background: url(../images/page4_background.png);
+  background-size: cover;
+  background-color: rgb(165, 73, 137);
+}
+.page4 .page4-header{
+ text-align: center;
+  margin-top: 30px;
+}
+.page4 .page4-header .text{
+  font-weight: 700;
+  font-size: 1.8em;
+  color: white;
+  margin: auto;
+}
+.page4 .page4-ice-cream{
+  background: url(../images/page4_ice_cream.png);
+  height: 80px;
+  width: 46px;
+  background-size: cover;
+  position: absolute;
+  left: 18%;
+  top: 23%;
+}
+.page4 .text-has-deg{
+  color: white;
+  font-size: 3.2em;
+  font-weight: 700;
+  transform: rotate(18deg);
+}
+.page4 .design-text-wrap{
+  position: absolute;
+  right: 10%;
+  top: 22%;
+}
+.page4 .page4-text-wrap{
+  color: white;
+  font-size: 1.5em;
+  font-weight: 700;
+}
+.page4 .visual-design-text-wrap{
+  position: absolute;
+  top: 40%;
+  left: 8%;
+}
+.page4 .page4-text-wrap .text{
+  display: inline-block;
+  margin-top: 15px;
+}
+.page4 .engineer-type-text-wrap{
+  position: absolute;
+  right: 8%;
+  top: 64%;
+}
+.page4 .engineer-text-wrap{
+  position: absolute;
+  bottom: 8%;
+  left: 10%;
+}
+.page4 .page4-popsicle{
+  position: absolute;
+  width: 44px;
+  height: 80px;
+  background: url(../images/page4_popsicle.png);
+  background-size: cover;
+  right: 18%;
+  bottom: 6%;}
+@media screen and (device-aspect-ratio: 5/8), screen and (device-aspect-ratio: 3/5){
+  .page4 .page4-ice-cream{
+    left: 15%;
+    top: 25%;
+  }
+  .page4 .engineer-type-text-wrap{
+    right: 8%;
+    top: 70%;
+  }
+  .page4 .engineer-text-wrap{
+    bottom: 5%;
+    left: 2%;
+  }
+  .page4 .design-text-wrap{
+    right: 10%;
+    top: 28%;
+  }
+  .page4 .page4-popsicle{
+    display: none;
+  }
+}.page2-header .page2-header-shape{
 
 }
 

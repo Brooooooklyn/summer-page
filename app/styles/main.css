@@ -248,10 +248,16 @@ body {
   top: 25%;
 }
 
-.list-body .list-item {
+.page2 .list-body .list-item {
   width: 100%;
   height: 25%;
-  margin-top: 8%;
+  margin-top: 10%;
+}
+
+.page3 .list-body .list-item {
+  width: 100%;
+  height: 25%;
+  margin-top: 12%;
 }
 
 .list-body .list-item .icon {
@@ -261,77 +267,104 @@ body {
 .list-body .list-item .intro {
   display: inline-block;
   position: absolute;
-  left: 35%;
+  left: 32%;
   color: #444444;
   font-size: 16px;
   font-weight: 700;
 }
 .list-body .list-item .intro span {
   display: block;
-  line-height: 30px;
+  line-height: 20px;
 }
 
 .page2 .item-1 .icon {
   background-image: url(../images/page2_icon_t.png);
   background-size: cover;
-  height: 40px;
-  width: 20px;
-  margin: 3% 0 0 10%;
+  height: 34px;
+  width: 17px;
+  margin: 1% 0 0 9%;
 }
 
 .page2 .item-2 .icon {
   background-image: url(../images/page2_icon_location.png);
   background-size: cover;
-  width: 32px;
-  height: 40px;
-  margin: 3% 0 0 8%;
+  width: 25px;
+  height: 31px;
+  margin: 2% 0 0 8%;
 }
 
 .page2 .item-3 .icon {
   background-image: url(../images/page2_icon_people.png);
   background-size: cover;
-  width: 35px;
-  height: 35px;
-  margin: 4% 0 0 8%;
+  width: 25px;
+  height: 25px;
+  margin: 2% 0 0 8%;
 }
 
 .page3 .item-1 .icon {
-  background-size: 30px 60px;
   background-image: url(../images/page3_icon_t.png);
+  background-size: cover;
+  width: 17px;
+  height: 34px;
+  margin: 1% 0 0 12%;
 }
 
 .page3 .item-2 .icon {
-  background-size: 55px 50px;
   background-image: url(../images/page3_icon_talk.png);
+  background-size: cover;
+  width: 42px;
+  height: 30px;
+  margin: 2% 0 0 8%;
 }
 
 .page3 .item-3 .icon {
-  background-size: 60px;
   background-image: url(../images/page3_icon_today.png);
+  background-size: cover;
+  width: 50px;
+  height: 50px;
+  margin: 0 0 0 7%;
+}
+
+.page6 .list-body .list-item {
+  width: 100%;
+  height: 25%;
+  margin-top: 2%;
+}
+
+.page6 .list-item .icon {
+  position: absolute;
+  left: 10%;
+  width: 35px;
+  margin-top: 1%;
 }
 
 .page6 .item-1 .icon {
-  background-size: 40px;
+  height: 32px;
+  background-size: cover;
   background-image: url(../images/page6_icon_star.png);
 }
 
 .page6 .item-2 .icon {
-  background-size: 35px 45px;
+  height: 42px;
+  background-size: cover;
   background-image: url(../images/page6_icon_bulb.png);
 }
 
 .page6 .item-3 .icon {
-  background-size: 40px 30px;
+  height: 24px;
+  background-size: cover;
   background-image: url(../images/page6_icon_humburg.png);
 }
 
 .page6 .item-4 .icon {
-  background-size: 50px 45px;
+  height: 30px;
+  background-size: cover;
   background-image: url(../images/page6_icon_message.png);
 }
 
 .page6 .item-5 .icon {
-  background-size: 45px;
+  height: 32px;
+  background-size: cover;
   background-image: url(../images/page6_icon_smile.png);
 }
 
@@ -340,7 +373,7 @@ body {
 }
 
 .page6 .list-body .list-item .intro span {
-  line-height: 25px;
+  line-height: 20px;
 }
 
 .clearfix:before {

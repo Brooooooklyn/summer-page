@@ -241,34 +241,30 @@ body {
 }
 
 .list-body {
-  position: relative;
+  position: absolute;
+  width: 90%;
+  height: 50%;
+  left: 5%;
+  top: 25%;
 }
 
 .list-body .list-item {
-  position: relative;
-  margin: 50px 0;
-  padding: 20px 0;
+  width: 100%;
+  height: 25%;
+  margin-top: 8%;
 }
 
 .list-body .list-item .icon {
   display: inline-block;
-  position: absolute;
-  width: 18%;
-  left: 1%;
-  height: 60px;
-  margin-left: 20px;
-  margin-right: 15px;
-  background-position: center top;
-  background-repeat: no-repeat;
 }
 
 .list-body .list-item .intro {
   display: inline-block;
   position: absolute;
-  left: 32%;
-  color: #a6a6a6;
+  left: 35%;
+  color: #444444;
   font-size: 16px;
-  -webkit-font-smoothing: antialiased;
+  font-weight: 700;
 }
 .list-body .list-item .intro span {
   display: block;
@@ -276,18 +272,27 @@ body {
 }
 
 .page2 .item-1 .icon {
-  background-size: 30px 60px;
   background-image: url(../images/page2_icon_t.png);
+  background-size: cover;
+  height: 40px;
+  width: 20px;
+  margin: 3% 0 0 10%;
 }
 
 .page2 .item-2 .icon {
-  background-size: 48px 59px;
   background-image: url(../images/page2_icon_location.png);
+  background-size: cover;
+  width: 32px;
+  height: 40px;
+  margin: 3% 0 0 8%;
 }
 
 .page2 .item-3 .icon {
-  background-size: 58px 58px;
   background-image: url(../images/page2_icon_people.png);
+  background-size: cover;
+  width: 35px;
+  height: 35px;
+  margin: 4% 0 0 8%;
 }
 
 .page3 .item-1 .icon {

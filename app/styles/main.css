@@ -1,6 +1,6 @@
 html {
   touch-action: pan-y;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: 'Helvetica Neue', 'Hiragino Sans GB', 'WenQuanYi Micro Hei', 'Microsoft Yahei', Helvetica, Arial, sans-serif;
 }
 body {
   -webkit-backface-visibility: hidden;
@@ -54,6 +54,7 @@ body {
   vertical-align: baseline;
   width: 414px;
   word-wrap: break-word;
+  color: #5E5E5E;
 }
 
 .view-container{
@@ -90,17 +91,17 @@ body {
   background: url(../images/page1_art_text.png);
   background-size: cover;
   position: relative;
-  left: 35px;
-  top: 35px;
+  left: 12%;
+  top: 12%;
 }
-.has-triangle-bg .shooes{
+.has-triangle-bg .shoes{
   background: url(../images/page1_shoes.png);
   width: 80px;
   height: 81px;
   background-size: cover;
   position: absolute;
   right: 25px;
-  top: 51%;
+  top: 49%;
 }
 .has-triangle-footer{
   height: 42%;
@@ -131,34 +132,14 @@ body {
   position: relative;
   left: 25px;
 }
-.page-header{
-  height: 15%;
+.page .page-header{
+  text-align: center;
+  position: absolute;
+  top: 5%;
+  width: 80%;
+  left: 10%;
 }
-.page2-header .page2-header-color{
-  height: 100%;
-  background: rgb(53, 158, 211);
-}
-.page-header .page-header-shape{
-  background: url(../images/page2_header.png);
-  height: 100%;
-  position: relative;
-  bottom: 12px;
-  background-repeat: repeat-x;
-}
-.page3-header .page3-header-color{
-  height: 100%;
-  background: rgb(178,105,151);
-}
-.page4{
-  background: url(../images/page4_background.png);
-  background-size: cover;
-  background-color: rgb(165, 73, 137);
-}
-.page4 .page4-header{
- text-align: center;
-  margin-top: 30px;
-}
-.page4 .page4-header .text{
+.page .page-header .text{
   font-weight: 700;
   font-size: 1.8em;
   color: white;
@@ -242,7 +223,7 @@ body {
 
 .list-body {
   position: absolute;
-  width: 90%;
+  width: 95%;
   height: 50%;
   left: 5%;
   top: 25%;
@@ -266,12 +247,23 @@ body {
 
 .list-body .list-item .intro {
   display: inline-block;
-  position: absolute;
-  left: 32%;
-  color: #444444;
   font-size: 16px;
   font-weight: 700;
 }
+
+.page2 .list-body .list-item .intro{
+  margin-left: 15%;
+}
+
+.page3 .list-body .list-item .intro{
+  position: absolute;
+  left: 35%;
+}
+
+.page6 .list-body .list-item .intro{
+  margin-left: 30%;
+}
+
 .list-body .list-item .intro span {
   display: block;
   line-height: 20px;
@@ -325,15 +317,85 @@ body {
   margin: 0 0 0 7%;
 }
 
+.page5 .title{
+  position: absolute;
+  color: #0475BA;
+  font-size: 1.6em;
+  font-weight: 700;
+  left: 8%;
+}
+
+.page5 .title1{
+  top: 20%;
+}
+
+.page5 .title2{
+  top: 48%;
+}
+
+.page5 .title3{
+  top: 82%;
+}
+
+.page5 .chapter{
+  position: absolute;
+  font-size: 1.2em;
+  font-weight: 700;
+  left: 8%;
+}
+
+.page5 .chapter span{
+  display: block;
+  line-height: 25px;
+}
+
+.page5 .chapter-one{
+  top: 28%;
+}
+
+.page5 .chapter-two{
+  top: 56%;
+}
+
+.page5 .chapter-three{
+  top: 90%;
+}
+
+.page5 .icon{
+  position: absolute;
+  background-size: cover;
+  right: 10%;
+}
+
+.page5 .icon-umbrella{
+  width: 70px;
+  height: 75px;
+  background-image: url(../images/page5_icon_umbrella.png);
+  top: 20%;
+}
+
+.page5 .icon-machine{
+  width: 70px;
+  height: 70px;
+  background-image: url(../images/page5_icon_machine.png);
+  top: 50%;
+}
+
+.page5 .icon-boat{
+  width: 92px;
+  height: 70px;
+  background-image: url(../images/page5_icon_boat.png);
+  top: 80%;
+}
+
 .page6 .list-body .list-item {
   width: 100%;
-  height: 25%;
-  margin-top: 2%;
+  margin-bottom: 10%;
 }
 
 .page6 .list-item .icon {
   position: absolute;
-  left: 10%;
+  left: 5%;
   width: 35px;
   margin-top: 1%;
 }
@@ -368,12 +430,52 @@ body {
   background-image: url(../images/page6_icon_smile.png);
 }
 
-.page6 {
-
-}
-
 .page6 .list-body .list-item .intro span {
   line-height: 20px;
+}
+
+.page7{
+  background-image: url(../images/page7_background.png);
+  background-size: cover;
+  background-position: bottom center;
+}
+
+.page7 .member-wrap{
+  position: absolute;
+  width: 100%;
+  height: 60%;
+  top: 20px;
+}
+
+.page7 .member{
+  display: inline-block;
+  width: 22%;
+  border-radius: 50%;
+  background: pink;
+  background-size: cover;
+  margin: 5% 0 0 8%;
+}
+
+.page7 .welcome{
+  position: absolute;
+  top: 60%;
+  width: 100%;
+  text-align: center;
+  font-size: 1.5em;
+  color: #359ED3;
+  font-weight: 600;
+}
+
+.page7 .logo{
+  position: absolute;
+  top: 68%;
+  background: url(../images/page7_logo.png);
+  background-size: cover;
+  width: 200px;
+  height: 31px;
+  left: 0;
+  right: 0;
+  margin: auto;
 }
 
 .clearfix:before {

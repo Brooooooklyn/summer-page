@@ -2,7 +2,8 @@
 ;(function(window, document, undefined) {
   'use strict';
   var summer = window.summer || (window.summer = {}),
-      that   = summer;
+      that   = summer,
+      body   = document.body;
   that.views = {
     init: function() {
       var pageNode, size,
@@ -44,14 +45,22 @@
       paint.computedVal = {};
       views.init();
     },
+    pageOneInit: function() {
+      var views = that.views,
+          height= views.height,
+          shoes = document.querySelector('.shoes');
+      shoes.style.top = (119 / 200) * height - 50 + 'px';
+    },
     memberInit: function() {
       var memberNodes = document.querySelectorAll('.member'),
           memberNode  = memberNodes[0],
           size   = memberNode.getBoundingClientRect(),
-          width  = size.width;
+          width  = size.width,
+          applyButton = memberNodes[4];
       for (var i = 0; i < memberNodes.length; i++) {
         memberNodes[i].style.height = width + 'px';
       }
+      setApplyButton(applyButton, width);
     }
   };
 
@@ -81,7 +90,8 @@
       ctx.save();
       switch (pageNum) {
         case 1:
-
+          views.pageOneInit();
+          drawPageOne(ctx, width, height);
           break;
         case 2:
           drawPageTwo(ctx, width, height);
@@ -146,9 +156,26 @@
     computedVal: {}
   };
 
+  function drawPageOne(ctx, width, height) {
+    var paint              = that.paint,
+        drawStack          = paint.drawStack,
+        worker             = paint.worker,
+        sectionTopStyle    = {fillStyle: '#37BFA8', strokeStyle: '#37BFA8'},
+        sectionBottomStyle = {fillStyle: '#21A590', strokeStyle: '#21A590'},
+        ctxStack;
+    worker('page1', 'sectionTopBegin', parseInt(height * 0.45));
+    worker('page1', 'sectionTopEnd', parseInt(height * 0.6));
+    ctx.clearRect(0, 0, width, height);
+    ctx.restore();
+    drawStack('page1', sectionTopStyle, drawPage1SectionTop);
+    drawStack('page1', sectionBottomStyle, drawPage1SectionBottom);
+    ctxStack = paint.ctx.page1;
+    paint.applyDrawStack(ctxStack, ctx);
+  }
+
   function drawPageTwo(ctx, width, height) {
     var paint  = that.paint,
-        drawStack = that.paint.drawStack,
+        drawStack = paint.drawStack,
         sectionWaveStyle = {fillStyle: '#359ED3', strokeStyle: '#359ED3'},
         ctxStack;
     ctx.clearRect(0, 0, width, height);
@@ -228,6 +255,30 @@
     drawStack('page6', sectionWaveStyle, drawSectionWave);
     ctxStack = paint.ctx.page6;
     paint.applyDrawStack(ctxStack, ctx);
+  }
+
+  function drawPage1SectionTop(ctx) {
+    var width  = ctx.canvas.width,
+        computedVal = that.paint.computedVal.page1;
+    ctx.beginPath();
+    ctx.moveTo(0, computedVal.sectionTopBegin);
+    ctx.lineTo(width, computedVal.sectionTopEnd);
+    ctx.lineTo(width, 0);
+    ctx.lineTo(0, 0);
+    ctx.fill();
+  }
+
+  function drawPage1SectionBottom(ctx) {
+    var height = ctx.canvas.height,
+        width  = ctx.canvas.width,
+        computedVal = that.paint.computedVal.page1;
+    ctx.beginPath();
+    ctx.moveTo(0, computedVal.sectionTopBegin);
+    ctx.lineTo(width, computedVal.sectionTopEnd);
+    ctx.lineTo(width, height);
+    ctx.lineTo(0, height);
+    ctx.stroke();
+    ctx.fill();
   }
 
   function drawSectionEngineer(ctx) {
@@ -342,9 +393,116 @@
     ctx.fill();
   }
 
-  // function setApplyButton(node) {
-  //   var oldApplyNode = document.querySelector('.apply');
-  // }
+  function setApplyButton(node, width) {
+    var oldApplyNode   = document.querySelector('.apply'),
+        applyChildNode1= document.createElement('SPAN'),
+        applyChildNode2= document.createElement('SPAN'),
+        applyTextNode1 = document.createTextNode('点击'),
+        applyTextNode2 = document.createTextNode('申请'),
+        tempNode       = document.createDocumentFragment(),
+        childNodeHeight, parentHeight, margin, fontSize;
+    removeChildren(oldApplyNode);
+    removeClass(oldApplyNode, 'apply');
+    applyChildNode1.appendChild(applyTextNode1);
+    applyChildNode2.appendChild(applyTextNode2);
+    tempNode.appendChild(applyChildNode1);
+    tempNode.appendChild(applyChildNode2);
+    node.appendChild(tempNode);
+    addClass(node, 'apply');
+    parentHeight = width;
+    childNodeHeight = applyChildNode1.getBoundingClientRect().height;
+    margin = (0.95 * parentHeight - childNodeHeight * 2) / 2;
+    fontSize = parentHeight / 4;
+    node.style.fontSize = fontSize + 'px';
+    applyChildNode1.style.marginTop = margin + 'px';
+  }
+
+  function removeChildren(parentNode) {
+    var childNodes, len;
+    if(!parentNode) {
+      return;
+    }
+    childNodes = parentNode.childNodes;
+    if(!childNodes) {
+      return;
+    }
+    len = childNodes.length;
+    while(len > 0) {
+      parentNode.removeChild(childNodes[0]);
+      len = childNodes.length;
+    }
+  }
+
+
+  var removeClass, addClass, inArray;
+
+  (function() {
+    var arr = [];
+    if(arr.indexOf) {
+      inArray = function(array, val) {
+        var index = array.indexOf(val);
+        if(index !== -1){
+          return true;
+        }else {
+          return false;
+        }
+      };
+    }else {
+      inArray = function(array, val) {
+        for(var i = 0; i < array.length; i ++) {
+          if(array[i] === val){
+            return true;
+          }
+        }
+        return false;
+      };
+    }
+  })();
+
+  (function() {
+    var node = body;
+    if(node.classList) {
+      removeClass = function(element, className){
+        if(!element) {
+          return;
+        }
+        element.classList.remove(className);
+      };
+      addClass = function(element, className) {
+        if(!element) {
+          return;
+        }
+        element.classList.add(className);
+      };
+    }else {
+      removeClass = function(element, className){
+        if(!element) {
+          return;
+        }
+        var classNames = element.className.split(/\s+/),
+            position = -1,
+            i, len;
+        for(i = 0, len = classNames.length; i < len; i++) {
+          if(classNames[i] === className) {
+            position = i;
+            break;
+          }
+        }
+        classNames.splice(position, 1);
+        element.className = classNames.join(' ');
+      };
+      addClass = function(element, className) {
+        var classNames = element.className.split(/\s+/);
+        if(inArray(classNames, className)) {
+          return;
+        }else {
+          classNames.push(className);
+        }
+        element.className = classNames.join(' ');
+      };
+    }
+  })();
+
 
 
   window.onresize = function() {
@@ -353,8 +511,10 @@
 
   window.onload = function() {
     that.views.init();
+    console.log(document.readyState);
   };
   window.onhashchange = function() {
     that.views.init();
   };
+
 })(window, document);

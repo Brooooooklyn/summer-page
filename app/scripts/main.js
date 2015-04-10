@@ -61,6 +61,16 @@
         memberNodes[i].style.height = width + 'px';
       }
       setApplyButton(applyButton, width);
+    },
+    loadResources: function() {
+      var resources = [
+        '../images/page1_art_text.png',
+        '../images/page1_shoes.png',
+        '../images/page1_logo.png',
+        '../images/page1_footer.jpg'
+      ];
+      var shadowImg   = new Image(),
+          loadingNode = document.querySelector('#loading');
     }
   };
 

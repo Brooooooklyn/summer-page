@@ -74,11 +74,37 @@ body {
   }
 }
 
-.loading-page{
+.view-container .page0{
   position: absolute;
   width: 100%;
   height: 100%;
   background: #383838;
+  display: block;
+  -webkit-transition: -webkit-transform 218ms ease-in-out, opacity 218ms ease-in-out;
+  -o-transition: -webkit-transform 218ms ease-in-out, opacity 218ms ease-in-out;
+  transition: -webkit-transform 218ms ease-in-out, opacity 218ms ease-in-out;
+  -moz-transition: all 0.2s ease-out;
+}
+
+.view-container .fade{
+  -webkit-transform: scale(1.5);
+  -ms-transform: scale(1.5);
+  -o-transform: scale(1.5);
+  transform: scale(1.5);
+  opacity: 0;
+  filter: alpha(opacity=0);
+}
+
+.page0 .logo{
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  margin: auto;
+  background-image: url('../images/logo.png');
+  width: 120px;
+  height: 120px;
 }
 
 #loading {
@@ -536,4 +562,3 @@ body {
 .clearfix:after {
   clear: both;
 }
-

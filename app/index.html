@@ -21,11 +21,13 @@
     <!--[if lt IE 10]>
       <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
-    <div class="loading-page">
-        <div id="loading"></div>
-    </div>
 
     <div class="view-container">
+        <div class="page page0">
+            <div id="loading"></div>
+            <div class="logo"></div>
+        </div>
+
         <div class="page page1">
             <canvas class="page1-canvas"></canvas>
             <div class="art-text"></div>
@@ -218,6 +220,7 @@
 
     <!-- build:js scripts/vendor.js -->
     <!-- bower:js -->
+    <script src="/bower_components/jquery/dist/jquery.js"></script>
     <!-- endbower -->
     <!-- endbuild -->
 

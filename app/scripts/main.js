@@ -3,7 +3,8 @@
   'use strict';
   var summer = window.summer || (window.summer = {}),
       that   = summer,
-      body   = document.body;
+      body   = document.body,
+      _shadowEle = document.createElement('div');
   that.views = {
     init: function() {
       var pageNode, size,
@@ -13,18 +14,26 @@
           paint   = that.paint;
       pageNode = document.querySelector('.page' + pageNum);
       if(page === '') {
-        window.location.hash = '1';
+        pageNum = 1;
+        window.location.hash = 0;
       }else{
         views.pageInit(pageNode);
       }
       size = views.getSize(pageNode);
+      if(!size) {
+        return;
+      }
       views.height = size.height;
       views.width = size.width;
       paint.init(pageNode, pageNum);
     },
     getSize: function(node) {
-      var width = node.getBoundingClientRect().width,
-          height= node.getBoundingClientRect().height;
+      var width, height;
+      if(!node) {
+        return;
+      }
+      width = node.getBoundingClientRect().width;
+      height= node.getBoundingClientRect().height;
       return {
         width : Math.ceil(width),
         height: Math.ceil(height)
@@ -62,19 +71,75 @@
       }
       setApplyButton(applyButton, width);
     },
+    /**
+     * 需要预加载的内容放在这里
+     * @type {Array}
+     */
+    resources: [
+      '../images/page1_art_text.png',
+      '../images/page1_shoes.png',
+      '../images/page1_logo.png',
+      '../images/page1_footer.jpg',
+      '../images/page2_icon_t.png',
+      '../images/page2_icon_location.png',
+      '../images/page2_icon_people.png',
+      '../images/page3_icon_t.png',
+      '../images/page3_icon_talk.png',
+      '../images/page3_icon_today.png',
+      '../images/page4_ice_cream.png',
+      '../images/page4_popsicle.png',
+      '../images/page5_icon_umbrella.png',
+      '../images/page5_icon_machine.png',
+      '../images/page5_icon_boat.png',
+      '../images/page6_icon_star.png',
+      '../images/page6_icon_bulb.png',
+      '../images/page6_icon_humburg.png',
+      '../images/page6_icon_message.png',
+      '../images/page6_icon_smile.png',
+      '../images/page7_background.png',
+      '../images/page7_logo.png'
+    ],
+    /**
+     * 预加载方法，内部会判断当前页面的hash来判断是刷新页面还是初始化页面
+     * 如果是刷新页面，则在定向到loading page之后load完资源然后返回之前的页面
+     * 如果是初始化页面则跳转到第一页
+     * @return {[type]}
+     */
     loadResources: function() {
-      var resources = [
-        '../images/page1_art_text.png',
-        '../images/page1_shoes.png',
-        '../images/page1_logo.png',
-        '../images/page1_footer.jpg'
-      ];
-      var shadowImg   = new Image(),
-          loadingNode = document.querySelector('#loading');
-    }
+      var views = that.views,
+          page, pageNum, tempImg, len, resources;
+      resources = views.resources;
+
+      page = window.location.hash;
+      pageNum = page === '' ? 1 : parseInt(page.slice(1));
+
+      views.resourcesCount = resources.length;
+
+      if(views.resourcesLoaded !== views.resourcesCount) {
+        window.location.hash = 0;
+        len = views.resourcesCount;
+        for (var i = len - 1; i >= 0; i--) {
+          tempImg = new Image();
+          tempImg.src = resources[i];
+          eventHandler.addHandler(tempImg, 'load', function(){
+            imgLoaded(len, pageNum);
+          });
+        }
+      }else {
+        return;
+      }
+    },
+    resourcesLoaded: 0
   };
 
+
   that.paint = {
+    /**
+     * cavas的init方法，计算出页面宽高，并设置当前页面canvas节点的宽高
+     * @param  pageNode {Node Object} 当前页面容器节点
+     * @param  pageNum  {Int} 当前页码，用于决定初始化哪一个页面的canvas
+     * @return {null}
+     */
     init: function(pageNode, pageNum) {
       var canvasNode = pageNode.getElementsByTagName('CANVAS')[0],
           views, paint, scale;
@@ -92,6 +157,14 @@
         return;
       }
     },
+    /**
+     * 类似于route的功能，根据传入的页码来调用分别对应各页的canvas绘制方法
+     * @param  canvasNode {Node Object} canvas 节点对象
+     * @param  pageNum    {Int} 页码
+     * @return {null}
+     * @todo 路由的功能需要提取为公共的方法而不是canvas绘图的方法
+     *       这样设置会导致一个页面不包含canvas节点时无法在这里的路由中设置对应的页面初始化方法
+     */
     drawPage: function(canvasNode, pageNum) {
       var ctx = canvasNode.getContext('2d'),
           width = canvasNode.width,
@@ -123,7 +196,21 @@
           break;
       }
     },
+    /**
+     * ctx 保存着各个页面的canvas绘图样式上下文信息和绘图方法栈
+     * @type {Object}
+     */
     ctx : {},
+    /**
+     * 这个方法用来将方法参数中的canvas style和绘图方法压入ctx栈中，但是并不马上执行
+     * 只有在需要绘图时调用applyDrawStack方法才会执行
+     * 这样做的好处是可以让每次绘图单独使用自己的canvas样式，不会影响到后续的绘图。
+     * 缺点是必须显式的对每次绘图进行样式设置，即使它的样式跟上一次绘图的样式一致
+     * @param  context {String} 设置绘图方法与样式栈的上下文，页面单独使用的绘图方法设置为pagen
+     * @param  style   {Object} 设置绘图的样式，其属性必须与canvasNode.getContext('2d')中属性同名
+     * @param  drawFn  {Function} 绘图方法
+     * @return {null}
+     */
     drawStack: function(context, style, drawFn) {
       var _context = that.paint.ctx[context] || (that.paint.ctx[context] = {}),
           stack = _context.stack || (_context.stack = []),
@@ -131,6 +218,12 @@
       stack.push(style);
       drawList.push(drawFn);
     },
+    /**
+     * 执行ctx栈中的绘图方法，并对相应的方法应用相应的样式
+     * @param  context {String} page 页码
+     * @param  ctx     {Canvas context Object} 当前canvas上下文
+     * @return {null}
+     */
     applyDrawStack: function(context, ctx) {
       var ctxStack = context,
           tempStyle, tempDrawFn;
@@ -145,26 +238,59 @@
         tempDrawFn(ctx);
       }
     },
-    worker: function(context, key, val) {
+    /**
+     * worker是用来共享绘图数据的，是为了避免重复的计算
+     * @param  context {String} 保存这些信息的上下文，pagen
+     * @param  key     {String} key
+     * @param  fn      {Function} 计算函数，已经取到值就不计算
+     * @return {Number or Array}
+     */
+    worker: function(context, key, fn) {
       var computedVal = that.paint.computedVal,
           _context = computedVal[context] || (computedVal[context] = {}),
-          _val = _context[key];
+          _val = _context[key],
+          val;
       if(_val === undefined){
+        if(!fn) {
+          return undefined;
+        }
+        val = fn();
+        console.log(val);
         _context[key] = val;
         return val;
-      } else if(typeof(_val) === 'object' && _val.length) {
+      } else if(typeof(_val) === 'object' && _val.length === 0) {
+        val = fn();
         if(val !== undefined){
           _context[key].push(val);
         }
         return _val;
-      } else if(_val !== val){
-        return false;
       } else{
-        return val;
+        return undefined;
       }
     },
     computedVal: {}
   };
+
+  function imgLoaded(len, page) {
+    var views = that.views,
+        pageNum;
+    views.resourcesLoaded += 1;
+    pageNum = page === 0 ? 1 : page;
+    if(views.resourcesLoaded === len){
+      resourcesCompleted(pageNum);
+    }
+  }
+
+  function resourcesCompleted(pageNum) {
+    var currentPageNode = document.querySelector('.page0');
+    addClass(currentPageNode, 'fade');
+    eventHandler.addHandler(currentPageNode, 'transitionend', function() {
+      window.location.hash = pageNum;
+    });
+    eventHandler.addHandler(currentPageNode, 'webkitTransitionEnd', function() {
+      window.location.hash = pageNum;
+    });
+  }
 
   function drawPageOne(ctx, width, height) {
     var paint              = that.paint,
@@ -173,8 +299,12 @@
         sectionTopStyle    = {fillStyle: '#37BFA8', strokeStyle: '#37BFA8'},
         sectionBottomStyle = {fillStyle: '#21A590', strokeStyle: '#21A590'},
         ctxStack;
-    worker('page1', 'sectionTopBegin', parseInt(height * 0.45));
-    worker('page1', 'sectionTopEnd', parseInt(height * 0.6));
+    worker('page1', 'sectionTopBegin', function() {
+      return parseInt(height * 0.45);
+    });
+    worker('page1', 'sectionTopEnd', function() {
+      return parseInt(height * 0.6);
+    });
     ctx.clearRect(0, 0, width, height);
     ctx.restore();
     drawStack('page1', sectionTopStyle, drawPage1SectionTop);
@@ -218,12 +348,24 @@
         sectionDesignStyle   = {fillStyle: '#C683B2', strokeStyle: '#C683B2'},
         drawStack = paint.drawStack,
         ctxStack;
-    worker('page4', 'sectionDesignBegin', parseInt(height * 0.25));
-    worker('page4', 'sectionDesignEnd', parseInt(height * 0.45));
-    worker('page4', 'sectionVisualDesignerEnd', parseInt(height * 0.65));
-    worker('page4', 'sectionFilledEnd', parseInt(height * 0.55));
-    worker('page4', 'sectionEngineerLeftEnd', parseInt(height * 0.7));
-    worker('page4', 'sectionEnginnerRightEnd', parseInt(height * 0.92));
+    worker('page4', 'sectionDesignBegin', function() {
+      return parseInt(height * 0.25);
+    });
+    worker('page4', 'sectionDesignEnd', function(){
+      return parseInt(height * 0.45);
+    });
+    worker('page4', 'sectionVisualDesignerEnd', function() {
+      return parseInt(height * 0.65);
+    });
+    worker('page4', 'sectionFilledEnd', function() {
+      return parseInt(height * 0.55);
+    });
+    worker('page4', 'sectionEngineerLeftEnd', function() {
+      return parseInt(height * 0.7);
+    });
+    worker('page4', 'sectionEnginnerRightEnd', function() {
+      return parseInt(height * 0.92);
+    });
     ctx.clearRect(0, 0, width, height);
     ctx.restore();
     drawStack('page4', sectionWaveStyle, drawSectionWave);
@@ -243,10 +385,18 @@
         lineStyle = {strokeStyle: '#0475BA', lineWidth: 4},
         drawStack = paint.drawStack,
         ctxStack;
-    worker('page5', 'firstLineStart', parseInt(height * 0.4));
-    worker('page5', 'firstLineEnd', parseInt(height * 0.42));
-    worker('page5', 'secondLineStart', parseInt(height * 0.7));
-    worker('page5', 'secondLineEnd', parseInt(height * 0.76));
+    worker('page5', 'firstLineStart', function(){
+      return parseInt(height * 0.4);
+    });
+    worker('page5', 'firstLineEnd', function() {
+      return parseInt(height * 0.42);
+    });
+    worker('page5', 'secondLineStart', function() {
+      return parseInt(height * 0.7);
+    });
+    worker('page5', 'secondLineEnd', function() {
+      return parseInt(height * 0.76);
+    });
     ctx.clearRect(0, 0, width, height);
     ctx.restore();
     drawStack('page5', lineStyle, drawPageFiveLine);
@@ -375,7 +525,9 @@
         tempPoint,
         waveBegin,
         wavePoints;
-    worker('wave', 'waveBegin', parseInt(height * 0.15));
+    worker('wave', 'waveBegin', function() {
+      return parseInt(height * 0.15);
+    });
     waveBegin = computedVal.wave.waveBegin;
     ctx.beginPath();
     ctx.moveTo(0, waveBegin);
@@ -395,7 +547,9 @@
       for(var _x = width; _x >= 0; _x--) {
         var _y = Math.sin(_x / 18) * 8 + waveBegin;
         tempPoint = [_x, _y];
-        worker('wave', 'wavePoints', tempPoint);
+        worker('wave', 'wavePoints', function() {
+          return tempPoint;
+        });
         ctx.lineTo(_x, _y);
       }
     }
@@ -470,7 +624,7 @@
   })();
 
   (function() {
-    var node = body;
+    var node = _shadowEle;
     if(node.classList) {
       removeClass = function(element, className){
         if(!element) {
@@ -513,7 +667,45 @@
     }
   })();
 
+  var eventHandler = {
+    addHandler: undefined,
+    removeHandler: undefined
+  };
 
+  eventHandler.addHandler = (function() {
+    var ele = _shadowEle;
+    if(ele.addEventListener) {
+      return function(element , type , handler){
+        element.addEventListener(type , handler , false);
+      };
+    }else if(ele.attachEvent) {
+      return function(element , type , handler){
+        element.attachEvent("on" + type , handler)
+      };
+    }else{
+      return function(element , type , handler){
+        element["on" + type] = handler;
+      };
+    };
+  })();
+  eventHandler.removeHandler = (function() {
+    var ele = _shadowEle;
+    if(ele.removeEventListener) {
+      return function(element , type , handler) {
+        element.removeEventListener(type , handler , false);
+      };
+    }else if(element.detachEvent) {
+      return function(element , type , handler) {
+        element.detachEvent("on" + type , handler);
+      };
+    }else{
+      return function(element , type , handler) {
+        element["on" + type] = null;
+      };
+    };
+  })();
+
+  that.views.loadResources();
 
   window.onresize = function() {
     that.views.pageRepaint();
@@ -521,7 +713,6 @@
 
   window.onload = function() {
     that.views.init();
-    console.log(document.readyState);
   };
   window.onhashchange = function() {
     that.views.init();

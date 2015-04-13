@@ -2,6 +2,7 @@
   "name": "summer",
   "private": true,
   "dependencies": {
-    "jquery": "~2.1.1"
+    "jquery": "~2.1.1",
+    "move.js": "visionmedia/move.js#~0.4.0"
   }
 }

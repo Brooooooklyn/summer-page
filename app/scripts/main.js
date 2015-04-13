@@ -3,7 +3,6 @@
   'use strict';
   var summer = window.summer || (window.summer = {}),
       that   = summer,
-      body   = document.body,
       _shadowEle = document.createElement('div');
   that.views = {
     init: function() {
@@ -56,9 +55,13 @@
     },
     pageOneInit: function() {
       var views = that.views,
+          width = views.width,
           height= views.height,
-          shoes = document.querySelector('.shoes');
+          shoes = document.querySelector('.shoes'),
+          artText = document.querySelector('.art-text');
       shoes.style.top = (119 / 200) * height - 50 + 'px';
+      artText.style.width = width * 0.5 + 'px';
+      artText.style.height = width * 0.5 - 6 + 'px';
     },
     memberInit: function() {
       var memberNodes = document.querySelectorAll('.member'),
@@ -107,11 +110,8 @@
      */
     loadResources: function() {
       var views = that.views,
-          page, pageNum, tempImg, len, resources;
+          tempImg, len, resources;
       resources = views.resources;
-
-      page = window.location.hash;
-      pageNum = page === '' ? 1 : parseInt(page.slice(1));
 
       views.resourcesCount = resources.length;
 
@@ -121,9 +121,7 @@
         for (var i = len - 1; i >= 0; i--) {
           tempImg = new Image();
           tempImg.src = resources[i];
-          eventHandler.addHandler(tempImg, 'load', function(){
-            imgLoaded(len, pageNum);
-          });
+          eventHandler.addHandler(tempImg, 'load', imgLoaded);
         }
       }else {
         return;
@@ -152,7 +150,7 @@
         canvasNode.height = views.height * scale;
         canvasNode.style.width = views.width + 'px';
         canvasNode.style.height= views.height + 'px';
-        paint.drawPage(canvasNode, pageNum);
+        paint.route(canvasNode, pageNum);
       }else {
         return;
       }
@@ -165,12 +163,13 @@
      * @todo 路由的功能需要提取为公共的方法而不是canvas绘图的方法
      *       这样设置会导致一个页面不包含canvas节点时无法在这里的路由中设置对应的页面初始化方法
      */
-    drawPage: function(canvasNode, pageNum) {
+    route: function(canvasNode, pageNum) {
       var ctx = canvasNode.getContext('2d'),
           width = canvasNode.width,
           height= canvasNode.height,
           views = that.views;
       ctx.save();
+      that.animate['page' + pageNum]();
       switch (pageNum) {
         case 1:
           views.pageOneInit();
@@ -250,16 +249,15 @@
           _context = computedVal[context] || (computedVal[context] = {}),
           _val = _context[key],
           val;
-      if(_val === undefined){
+      if(_val === undefined && fn && !fn.length){
         if(!fn) {
           return undefined;
         }
         val = fn();
-        console.log(val);
         _context[key] = val;
         return val;
       } else if(typeof(_val) === 'object' && _val.length === 0) {
-        val = fn();
+        val = fn;
         if(val !== undefined){
           _context[key].push(val);
         }
@@ -271,13 +269,24 @@
     computedVal: {}
   };
 
-  function imgLoaded(len, page) {
+  that.animate = {
+    page1: function() {
+      var animateClass;
+      animateClass = ['.art-text', '.shoes', '.text-node-1', '.text-node-2', '.page1-logo', '.page1-footer'];
+      applyAnimate(animateClass);
+    }
+  };
+
+  function imgLoaded() {
     var views = that.views,
-        pageNum;
+        page, pageNum, _pageNum, len;
+    len = views.resourcesCount;
     views.resourcesLoaded += 1;
-    pageNum = page === 0 ? 1 : page;
     if(views.resourcesLoaded === len){
-      resourcesCompleted(pageNum);
+      page = window.location.hash;
+      pageNum = page === '' ? 1 : parseInt(page.slice(1));
+      _pageNum = pageNum === 0 ? 1 : pageNum;
+      resourcesCompleted(_pageNum);
     }
   }
 
@@ -547,9 +556,7 @@
       for(var _x = width; _x >= 0; _x--) {
         var _y = Math.sin(_x / 18) * 8 + waveBegin;
         tempPoint = [_x, _y];
-        worker('wave', 'wavePoints', function() {
-          return tempPoint;
-        });
+        worker('wave', 'wavePoints', tempPoint);
         ctx.lineTo(_x, _y);
       }
     }
@@ -579,6 +586,36 @@
     fontSize = parentHeight / 4;
     node.style.fontSize = fontSize + 'px';
     applyChildNode1.style.marginTop = margin + 'px';
+  }
+
+  function applyAnimate(animateClassList) {
+    var x, len, _class, ele, _ele, next, nextEle, lock;
+    len = animateClassList.length;
+    ele = document.querySelector(animateClassList[0]);
+    ele.style.visibility = "visible";
+    addClass(ele, 'animated');
+    lock = false;
+    for(x = 0; x < len; x++) {
+      _class = animateClassList[x];
+      next = (x + 1 < len) ? x + 1 : len - 1;
+      nextEle = document.querySelector(animateClassList[next]);
+      _ele = document.querySelector(_class);
+      eventHandler.oneHandler(_ele, 'webkitAnimationEnd animationend',
+        function(currentNode, nextNode) {
+          return function() {
+            if(currentNode === ele) {
+              lock = true;
+            }
+            if(lock) {
+              console.log(nextNode);
+              removeClass(currentNode, 'animated');
+              nextNode.style.visibility = "visible";
+              addClass(nextNode, 'animated');
+            }
+          };
+        }(_ele, nextEle)
+      );
+    }
   }
 
   function removeChildren(parentNode) {
@@ -627,20 +664,38 @@
     var node = _shadowEle;
     if(node.classList) {
       removeClass = function(element, className){
-        if(!element) {
+        var _classList, len;
+        if(!element || !className) {
           return;
         }
-        element.classList.remove(className);
+        _classList = className.split(' ');
+        len = _classList.length;
+        if(len) {
+          for(var x = len - 1; x >= 0; x--) {
+            element.classList.remove(_classList[x]);
+          }
+        }else {
+          element.classList.remove(className);
+        }
       };
       addClass = function(element, className) {
-        if(!element) {
+        var _classList, len;
+        if(!element || !className) {
           return;
         }
-        element.classList.add(className);
+        _classList = className.split(' ');
+        len = _classList.length;
+        if(len){
+          for(var x = len - 1; x >= 0; x--) {
+            element.classList.add(_classList[x]);
+          }
+        }else {
+          element.classList.add(className);
+        }
       };
     }else {
       removeClass = function(element, className){
-        if(!element) {
+        if(!element || !className) {
           return;
         }
         var classNames = element.className.split(/\s+/),
@@ -656,9 +711,21 @@
         element.className = classNames.join(' ');
       };
       addClass = function(element, className) {
-        var classNames = element.className.split(/\s+/);
-        if(inArray(classNames, className)) {
+        var classNames, _classList, len;
+        if(!element || !className) {
           return;
+        }
+        classNames = element.className.split(/\s+/);
+        _classList = className.split(' ');
+        if(_classList.length) {
+          len = _classList.length;
+          for(var x = len - 1; x >= 0; x++) {
+            if(inArray(classNames, _classList[x])) {
+              return;
+            }else {
+              classNames.push(_classList[x]);
+            }
+          }
         }else {
           classNames.push(className);
         }
@@ -673,20 +740,45 @@
   };
 
   eventHandler.addHandler = (function() {
-    var ele = _shadowEle;
+    var ele = _shadowEle,
+        eventList, len;
     if(ele.addEventListener) {
       return function(element , type , handler){
-        element.addEventListener(type , handler , false);
+        eventList = type.split(' ');
+        len = eventList.length;
+        if(len) {
+          for(var x = len - 1; x >= 0; x--) {
+            element.addEventListener(eventList[x], handler, false);
+          }
+        }else {
+          element.addEventListener(type , handler , false);
+        }
       };
     }else if(ele.attachEvent) {
       return function(element , type , handler){
-        element.attachEvent("on" + type , handler)
+        eventList = type.split(' ');
+        len = eventList.length;
+        if(len) {
+          for(var x = len - 1; x >= 0; x--) {
+            element.attachEvent('on' + eventList[x], handler);
+          }
+        }else {
+          element.attachEvent('on' + type , handler);
+        }
       };
     }else{
       return function(element , type , handler){
-        element["on" + type] = handler;
+        eventList = type.split(' ');
+        len = eventList.length;
+        if(len) {
+          for(var x = len - 1; x >= 0; x--) {
+            element['on' + eventList[x]] = handler;
+          }
+        }else {
+          element['on' + type] = handler;
+        }
       };
-    };
+    }
   })();
   eventHandler.removeHandler = (function() {
     var ele = _shadowEle;
@@ -694,16 +786,25 @@
       return function(element , type , handler) {
         element.removeEventListener(type , handler , false);
       };
-    }else if(element.detachEvent) {
+    }else if(ele.detachEvent) {
       return function(element , type , handler) {
-        element.detachEvent("on" + type , handler);
+        element.detachEvent('on' + type , handler);
       };
     }else{
-      return function(element , type , handler) {
-        element["on" + type] = null;
+      return function(element , type) {
+        element['on' + type] = null;
       };
-    };
+    }
   })();
+
+  eventHandler.oneHandler = function(element, type, handler) {
+    var addHandler = eventHandler.addHandler,
+        removeHandler = eventHandler.removeHandler;
+    addHandler(element, type, function() {
+      handler();
+      removeHandler(element, type);
+    });
+  };
 
   that.views.loadResources();
 

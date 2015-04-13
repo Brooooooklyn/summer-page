@@ -9,6 +9,7 @@
 
     <!-- build:css styles/vendor.css -->
     <!-- bower:css -->
+    <link rel="stylesheet" href="/bower_components/animate.css/animate.css" />
     <!-- endbower -->
     <!-- endbuild -->
 
@@ -30,14 +31,14 @@
 
         <div class="page page1">
             <canvas class="page1-canvas"></canvas>
-            <div class="art-text"></div>
-            <div class="shoes"></div>
+            <div class="art-text lightSpeedIn pre-animation"></div>
+            <div class="shoes rollIn pre-animation"></div>
             <div class="text">
-                <div>这个夏天</div>
-                <div>和小伙伴们在</div>
+                <div class="text-node-1 bounceInUp pre-animation">这个夏天</div>
+                <div class="text-node-2 bounceInUp pre-animation">和小伙伴们在</div>
             </div>
-            <div class="logo"></div>
-            <div class="page1-footer"></div>
+            <div class="page1-logo flipInX pre-animation"></div>
+            <div class="page1-footer rubberBand pre-animation"></div>
         </div>
         <div class="page page2">
             <canvas class="page2-canvas"></canvas>
@@ -220,7 +221,6 @@
 
     <!-- build:js scripts/vendor.js -->
     <!-- bower:js -->
-    <script src="/bower_components/jquery/dist/jquery.js"></script>
     <!-- endbower -->
     <!-- endbuild -->
 

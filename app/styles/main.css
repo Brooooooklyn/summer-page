@@ -542,7 +542,6 @@ body {
   float: left;
   width: 22%;
   border-radius: 50%;
-  background: pink;
   background-size: cover;
   background-repeat: no-repeat;
   margin: 5% 0 0 8%;
@@ -602,4 +601,28 @@ body {
   z-index: 2;
   position: absolute;
   display: none;
+}
+.ziqiu{
+  background-image: url(../images/page7-member-ziqiu.png);
+}
+.zitian{
+  background-image: url(../images/page7-member-zitian.png);
+}
+.xuanxuan{
+  background-image: url(../images/page7-member-xuanxuan.png);
+}
+.jay{
+  background-image: url(../images/page7-member-jay.png);
+}
+.yaqian{
+  background-image: url(../images/page7-member-yaqian.png);
+}
+.junyuan{
+  background-image: url(../images/page7-member-junyuan.png);
+}
+.cunzhi{
+  background-image: url(../images/page7-member-cunzhi.png);
+}
+.yuhan{
+  background-image: url(../images/page7-member-yuhan.png);
 }

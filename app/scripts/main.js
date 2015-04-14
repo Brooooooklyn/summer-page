@@ -120,7 +120,15 @@
       '../images/page6_icon_message.png',
       '../images/page6_icon_smile.png',
       '../images/page7_background.png',
-      '../images/page7_logo.png'
+      '../images/page7_logo.png',
+      '../images/page7-member-ziqiu.png',
+      '../images/page7-member-zitian.png',
+      '../images/page7-member-xuanxuan.png',
+      '../images/page7-member-jay.png',
+      '../images/page7-member-yaqian.png',
+      '../images/page7-member-junyuan.png',
+      '../images/page7-member-cunzhi.png',
+      '../images/page7-member-yuhan.png'
     ],
     /**
      * 预加载方法，内部会判断当前页面的hash来判断是刷新页面还是初始化页面

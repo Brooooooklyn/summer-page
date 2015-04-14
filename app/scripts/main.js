@@ -24,6 +24,7 @@
       }
       views.height = size.height;
       views.width = size.width;
+      preparationAnimate();
       paint.init(pageNode, pageNum);
     },
     getSize: function(node) {
@@ -167,9 +168,13 @@
       var ctx = canvasNode.getContext('2d'),
           width = canvasNode.width,
           height= canvasNode.height,
-          views = that.views;
+          views = that.views,
+          animateFn;
       ctx.save();
-      that.animate['page' + pageNum]();
+      animateFn = that.animate['page' + pageNum];
+      if(animateFn) {
+        animateFn();
+      }
       switch (pageNum) {
         case 1:
           views.pageOneInit();
@@ -271,10 +276,15 @@
 
   that.animate = {
     page1: function() {
-      var animateClass;
-      animateClass = ['.art-text', '.shoes', '.text-node-1', '.text-node-2', '.page1-logo', '.page1-footer'];
-      applyAnimate(animateClass);
-    }
+      var animateClass1, animateClass2, arrayList1, arrayList2;
+      animateClass1 = ['.art-text', '.text-node-1', '.text-node-2'];
+      animateClass2 = ['.shoes', '.page1-logo'];
+      arrayList1 = animatedSequence(animateClass1);
+      applyAnimationBySequence(arrayList1);
+      arrayList2 = animatedSequence(animateClass2);
+      applyAnimationBySequence(arrayList2);
+    },
+    lock: false
   };
 
   function imgLoaded() {
@@ -588,34 +598,77 @@
     applyChildNode1.style.marginTop = margin + 'px';
   }
 
-  function applyAnimate(animateClassList) {
-    var x, len, _class, ele, _ele, next, nextEle, lock;
+  function animatedSequence(animateClassList) {
+    var x, len, className, nextClass, ele, nextEle, arrayList, arrayNode, iteratorFn;
     len = animateClassList.length;
-    ele = document.querySelector(animateClassList[0]);
-    ele.style.visibility = "visible";
-    addClass(ele, 'animated');
-    lock = false;
+    arrayList = {length: 0};
     for(x = 0; x < len; x++) {
-      _class = animateClassList[x];
-      next = (x + 1 < len) ? x + 1 : len - 1;
-      nextEle = document.querySelector(animateClassList[next]);
-      _ele = document.querySelector(_class);
-      eventHandler.oneHandler(_ele, 'webkitAnimationEnd animationend',
-        function(currentNode, nextNode) {
-          return function() {
-            if(currentNode === ele) {
-              lock = true;
-            }
-            if(lock) {
-              console.log(nextNode);
-              removeClass(currentNode, 'animated');
-              nextNode.style.visibility = "visible";
-              addClass(nextNode, 'animated');
-            }
-          };
-        }(_ele, nextEle)
-      );
+      className = animateClassList[x];
+      ele = document.querySelector(className);
+      if(x < len - 1){
+        nextClass = animateClassList[x + 1];
+        nextEle = document.querySelector(nextClass);
+      } else if(x === len - 1){
+        nextEle = null;
+      }
+      iteratorFn = animationEndBind.call(null, ele);
+      arrayNode = arrayList[x] = {
+        key: x,
+        ele: ele,
+        nextEle: nextEle,
+        iteratorFn: iteratorFn
+      };
+      arrayList.length += 1;
     }
+    return arrayList;
+  }
+
+  function applyAnimationBySequence(arrayList) {
+    var x, len, firstEle, currentNode, nextNode;
+    len = arrayList.length;
+    firstEle = arrayList[0].ele;
+    addClass(firstEle, 'animated');
+    firstEle.style.visibility = 'visible';
+    for(x = 0; x < len; x++) {
+      currentNode = arrayList[x].ele;
+      nextNode = arrayList[x].nextEle;
+      arrayList[x].iteratorFn.call(null, currentNode, nextNode, x);
+    }
+  }
+
+  function animationEndBind(_ele) {
+    return function(ele, nextEle, position) {
+      eventHandler.oneHandler(_ele, 'webkitAnimationEnd animationend',
+        animationCallback.call(null, ele, nextEle, position)
+      );
+    };
+  }
+
+  function animationCallback (ele, nextEle, position) {
+    return function() {
+      var lock;
+      if(position === 0){
+        that.animate.lock = true;
+      }
+      lock = that.animate.lock;
+      if(lock) {
+        removeClass(ele, 'animated');
+        if(nextEle) {
+          nextEle.style.visibility = 'visible';
+          addClass(nextEle, 'animated');
+        }
+      }
+    };
+  }
+
+  function preparationAnimate() {
+    var animationNodes = document.querySelectorAll('.pre-animation'),
+        tempNode;
+    for (var i = animationNodes.length - 1; i >= 0; i--) {
+      tempNode = animationNodes[i];
+      tempNode.style.visibility = 'hidden';
+    }
+    that.animate.lock = false;
   }
 
   function removeChildren(parentNode) {

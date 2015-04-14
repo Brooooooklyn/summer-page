@@ -74,16 +74,6 @@ body {
   }
 }
 
-@-webkit-keyframes hue {
-  from {
-    -webkit-filter: hue-rotate(0deg);
-  }
-
-  to {
-    -webkit-filter: hue-rotate(-360deg);
-  }
-}
-
 .pre-animation{
   visibility: hidden;
 }
@@ -117,6 +107,7 @@ body {
   left: 0;
   margin: auto;
   background-image: url('../images/logo.png');
+  background-repeat: no-repeat;
   width: 120px;
   height: 120px;
 }
@@ -128,6 +119,7 @@ body {
   margin-left: -60px;
   margin-top: -60px;
   background-image: url('../images/logo_loading.png');
+  background-repeat: no-repeat;
   width: 120px;
   height: 120px;
   background-size: 120px 120px;
@@ -161,6 +153,7 @@ body {
   height: 193px;
   background: url(../images/page1_art_text.png);
   background-size: cover;
+  background-repeat: no-repeat;
   position: absolute;
   left: 12%;
   top: 12%;
@@ -171,6 +164,7 @@ body {
   width: 80px;
   height: 81px;
   background-size: cover;
+  background-repeat: no-repeat;
   position: absolute;
   right: 5%;
 }
@@ -196,6 +190,7 @@ body {
   height: 25px;
   bottom: 25%;
   background-size: cover;
+  background-repeat: no-repeat;
   background-position: center bottom;
   position: absolute;
   left: 25px;
@@ -205,6 +200,7 @@ body {
   position: absolute;
   bottom: 0;
   background: url(../images/page1_footer.jpg);
+  background-repeat: no-repeat;
   background-size: cover;
   width: 100%;
   height: 20%;
@@ -226,6 +222,7 @@ body {
 }
 .page4 .page4-ice-cream{
   background: url(../images/page4_ice_cream.png);
+  background-repeat: no-repeat;
   height: 80px;
   width: 46px;
   background-size: cover;
@@ -237,7 +234,7 @@ body {
   color: white;
   font-size: 3.2em;
   font-weight: 700;
-  transform: rotate(18deg);
+  transform: rotate(18deg) !important;
 }
 .page4 .design-text-wrap{
   position: absolute;
@@ -274,6 +271,7 @@ body {
   height: 80px;
   background: url(../images/page4_popsicle.png);
   background-size: cover;
+  background-repeat: no-repeat;
   right: 18%;
   bottom: 6%;}
 @media screen and (device-aspect-ratio: 5/8), screen and (device-aspect-ratio: 3/5){
@@ -349,6 +347,7 @@ body {
 .page2 .item-1 .icon {
   background-image: url(../images/page2_icon_t.png);
   background-size: cover;
+  background-repeat: no-repeat;
   height: 34px;
   width: 17px;
   margin: 1% 0 0 9%;
@@ -357,6 +356,7 @@ body {
 .page2 .item-2 .icon {
   background-image: url(../images/page2_icon_location.png);
   background-size: cover;
+  background-repeat: no-repeat;
   width: 25px;
   height: 31px;
   margin: 2% 0 0 8%;
@@ -365,6 +365,7 @@ body {
 .page2 .item-3 .icon {
   background-image: url(../images/page2_icon_people.png);
   background-size: cover;
+  background-repeat: no-repeat;
   width: 25px;
   height: 25px;
   margin: 2% 0 0 8%;
@@ -373,6 +374,7 @@ body {
 .page3 .item-1 .icon {
   background-image: url(../images/page3_icon_t.png);
   background-size: cover;
+  background-repeat: no-repeat;
   width: 17px;
   height: 34px;
   margin: 1% 0 0 12%;
@@ -381,6 +383,7 @@ body {
 .page3 .item-2 .icon {
   background-image: url(../images/page3_icon_talk.png);
   background-size: cover;
+  background-repeat: no-repeat;
   width: 42px;
   height: 30px;
   margin: 2% 0 0 8%;
@@ -389,6 +392,7 @@ body {
 .page3 .item-3 .icon {
   background-image: url(../images/page3_icon_today.png);
   background-size: cover;
+  background-repeat: no-repeat;
   width: 50px;
   height: 50px;
   margin: 0 0 0 7%;
@@ -441,6 +445,7 @@ body {
 .page5 .icon{
   position: absolute;
   background-size: cover;
+  background-repeat: no-repeat;
   right: 10%;
 }
 
@@ -448,6 +453,7 @@ body {
   width: 70px;
   height: 75px;
   background-image: url(../images/page5_icon_umbrella.png);
+  background-repeat: no-repeat;
   top: 20%;
 }
 
@@ -455,6 +461,7 @@ body {
   width: 70px;
   height: 70px;
   background-image: url(../images/page5_icon_machine.png);
+  background-repeat: no-repeat;
   top: 50%;
 }
 
@@ -462,6 +469,7 @@ body {
   width: 92px;
   height: 70px;
   background-image: url(../images/page5_icon_boat.png);
+  background-repeat: no-repeat;
   top: 80%;
 }
 
@@ -481,30 +489,35 @@ body {
   height: 32px;
   background-size: cover;
   background-image: url(../images/page6_icon_star.png);
+  background-repeat: no-repeat;
 }
 
 .page6 .item-2 .icon {
   height: 42px;
   background-size: cover;
   background-image: url(../images/page6_icon_bulb.png);
+  background-repeat: no-repeat;
 }
 
 .page6 .item-3 .icon {
   height: 24px;
   background-size: cover;
   background-image: url(../images/page6_icon_humburg.png);
+  background-repeat: no-repeat;
 }
 
 .page6 .item-4 .icon {
   height: 30px;
   background-size: cover;
   background-image: url(../images/page6_icon_message.png);
+  background-repeat: no-repeat;
 }
 
 .page6 .item-5 .icon {
   height: 32px;
   background-size: cover;
   background-image: url(../images/page6_icon_smile.png);
+  background-repeat: no-repeat;
 }
 
 .page6 .list-body .list-item .intro span {
@@ -513,6 +526,7 @@ body {
 
 .page7{
   background-image: url(../images/page7_background.png);
+  background-repeat: no-repeat;
   background-size: cover;
   background-position: bottom center;
 }
@@ -530,6 +544,7 @@ body {
   border-radius: 50%;
   background: pink;
   background-size: cover;
+  background-repeat: no-repeat;
   margin: 5% 0 0 8%;
 }
 
@@ -556,6 +571,7 @@ body {
   position: absolute;
   top: 68%;
   background: url(../images/page7_logo.png);
+  background-repeat: no-repeat;
   background-size: cover;
   width: 200px;
   height: 31px;
@@ -575,4 +591,15 @@ body {
 
 .clearfix:after {
   clear: both;
+}
+
+.tips{
+  background-image: url(../images/arrow-up.png);
+  background-size: cover;
+  background-repeat: no-repeat;
+  width: 27.5px;
+  height: 14px;
+  z-index: 2;
+  position: absolute;
+  display: none;
 }

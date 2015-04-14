@@ -3,7 +3,9 @@
   'use strict';
   var summer = window.summer || (window.summer = {}),
       that   = summer,
-      _shadowEle = document.createElement('div');
+      _shadowEle = document.createElement('div'),
+      animationNodes = document.querySelectorAll('.pre-animation'),
+      tips  = document.querySelector('.tips');
   that.views = {
     init: function() {
       var pageNode, size,
@@ -16,7 +18,7 @@
         pageNum = 1;
         window.location.hash = 0;
       }else{
-        views.pageInit(pageNode);
+        views.pageInit(pageNum);
       }
       size = views.getSize(pageNode);
       if(!size) {
@@ -24,8 +26,11 @@
       }
       views.height = size.height;
       views.width = size.width;
-      preparationAnimate();
+      views.pageNum = pageNum;
       paint.init(pageNode, pageNum);
+      eventHandler.addHandler(tips, 'click',
+        that.animate.paging.call(null, pageNum)
+      );
     },
     getSize: function(node) {
       var width, height;
@@ -39,13 +44,14 @@
         height: Math.ceil(height)
       };
     },
-    pageInit: function(pageNode) {
-      var pages = document.querySelectorAll('.page'),
-          currentPage = pageNode;
-      for (var i = pages.length - 1; i >= 0; i--) {
-        pages[i].style.display = 'none';
+    pageInit: function(pageNum) {
+      var pageNode = document.querySelector('.page' + pageNum),
+          prevPage;
+      if(pageNum > 0 && pageNum <= 7) {
+        prevPage = document.querySelector('.page' + (pageNum - 1));
+        pageNode.style.display = 'block';
+        prevPage.style.display = 'none';
       }
-      currentPage.style.display = 'block';
     },
     //针对屏幕尺寸改变的情况，重新计算宽高
     pageRepaint: function() {
@@ -63,6 +69,19 @@
       shoes.style.top = (119 / 200) * height - 50 + 'px';
       artText.style.width = width * 0.5 + 'px';
       artText.style.height = width * 0.5 - 6 + 'px';
+    },
+    pageFourInit: function() {
+      var views = that.views,
+          height= views.height,
+          popsicle = document.querySelector('.page4-popsicle'),
+          icecream = document.querySelector('.page4-ice-cream'),
+          popsicleSize = 0.55,
+          icecreamSize = 0.575,
+          nodeHeight = height * 0.14;
+      popsicle.style.height = nodeHeight + 'px';
+      popsicle.style.width  = nodeHeight * popsicleSize + 'px';
+      icecream.style.height = nodeHeight = 'px';
+      icecream.style.width  = nodeHeight * icecreamSize + 'px';
     },
     memberInit: function() {
       var memberNodes = document.querySelectorAll('.member'),
@@ -171,8 +190,14 @@
           views = that.views,
           animateFn;
       ctx.save();
-      animateFn = that.animate['page' + pageNum];
-      if(animateFn) {
+      animateFn = that.animate.page;
+      if(pageNum === 1){
+        setTimeout(function() {
+          preparationAnimate();
+          animateFn();
+        }, 400);
+      } else {
+        preparationAnimate();
         animateFn();
       }
       switch (pageNum) {
@@ -187,6 +212,7 @@
           drawPageThree(ctx, width, height);
           break;
         case 4:
+          views.pageFourInit();
           drawPageFour(ctx, width, height);
           break;
         case 5:
@@ -275,16 +301,40 @@
   };
 
   that.animate = {
-    page1: function() {
-      var animateClass1, animateClass2, arrayList1, arrayList2;
-      animateClass1 = ['.art-text', '.text-node-1', '.text-node-2'];
-      animateClass2 = ['.shoes', '.page1-logo'];
-      arrayList1 = animatedSequence(animateClass1);
-      applyAnimationBySequence(arrayList1);
-      arrayList2 = animatedSequence(animateClass2);
-      applyAnimationBySequence(arrayList2);
+    page: function() {
+      var page, animateClass, arrayList;
+      page = that.views.pageNum;
+      animateClass = document.querySelectorAll('.page' + page + ' .pre-animation');
+      if(animateClass.length === 0) {
+        return;
+      }
+      arrayList = animatedSequence(animateClass);
+      applyAnimationByTime(arrayList);
     },
-    lock: false
+    lock: false,
+    paging: function() {
+      return function() {
+        var currentPage, nextPage, num;
+        num = that.views.pageNum;
+        if(num < 7) {
+          tips.style.display = 'none';
+          currentPage = document.querySelector('.page' + num);
+          nextPage = document.querySelector('.page' + (num + 1));
+          removeClass(currentPage, 'bounceInRight');
+          addClass(currentPage, 'fadeOutLeft animated');
+          that.paint.init(nextPage, num + 1);
+          nextPage.style.display = 'block';
+          addClass(nextPage, 'bounceInRight animated');
+          eventHandler.oneHandler(currentPage, 'webkitAnimationEnd animationend', function() {
+            currentPage.style.display = 'none';
+            window.location.hash = num + 1;
+            removeClass(currentPage, 'fadeOutLeft animated');
+          });
+        }else {
+          return;
+        }
+      };
+    }
   };
 
   function imgLoaded() {
@@ -302,7 +352,9 @@
 
   function resourcesCompleted(pageNum) {
     var currentPageNode = document.querySelector('.page0');
-    addClass(currentPageNode, 'fade');
+    setTimeout(function() {
+      addClass(currentPageNode, 'fade');
+    }, 600);
     eventHandler.addHandler(currentPageNode, 'transitionend', function() {
       window.location.hash = pageNum;
     });
@@ -599,15 +651,13 @@
   }
 
   function animatedSequence(animateClassList) {
-    var x, len, className, nextClass, ele, nextEle, arrayList, arrayNode, iteratorFn;
+    var x, len, ele, nextEle, arrayList, arrayNode, iteratorFn;
     len = animateClassList.length;
     arrayList = {length: 0};
     for(x = 0; x < len; x++) {
-      className = animateClassList[x];
-      ele = document.querySelector(className);
+      ele = animateClassList[x];
       if(x < len - 1){
-        nextClass = animateClassList[x + 1];
-        nextEle = document.querySelector(nextClass);
+        nextEle = animateClassList[x + 1];
       } else if(x === len - 1){
         nextEle = null;
       }
@@ -636,6 +686,32 @@
     }
   }
 
+  function applyAnimationByTime(arrayList) {
+    var x, len, firstEle, lastNode, currentNode, delay;
+    len = arrayList.length;
+    firstEle = arrayList[0].ele;
+    addClass(firstEle, 'animated');
+    firstEle.style.visibility = 'visible';
+    delay = 100;
+    for(x = 1; x < len; x++) {
+      currentNode = arrayList[x].ele;
+      setTimeout(animationDelayBind.call(null, currentNode) ,delay * x);
+    }
+    lastNode = arrayList[len - 1].ele;
+    eventHandler.oneHandler(lastNode, 'webkitAnimationEnd animationend', function() {
+      setTimeout(function() {
+        tips.style.display = 'block';
+      }, 200);
+    });
+  }
+
+  function animationDelayBind(currentNode) {
+    return function() {
+      currentNode.style.visibility = 'visible';
+      addClass(currentNode, 'animated');
+    };
+  }
+
   function animationEndBind(_ele) {
     return function(ele, nextEle, position) {
       eventHandler.oneHandler(_ele, 'webkitAnimationEnd animationend',
@@ -654,21 +730,31 @@
       if(lock) {
         removeClass(ele, 'animated');
         if(nextEle) {
+          that.animate.lock = true;
           nextEle.style.visibility = 'visible';
           addClass(nextEle, 'animated');
+        }else {
+          that.animate.lock = false;
+          setTimeout(function() {
+            tips.style.display = 'block';
+          }, 500);
         }
+      }else {
+        setTimeout(function() {
+          tips.style.display = 'block';
+        }, 500);
       }
     };
   }
 
   function preparationAnimate() {
-    var animationNodes = document.querySelectorAll('.pre-animation'),
-        tempNode;
+    var tempNode;
+    tips.style.display = 'none';
+    that.animate.lock = false;
     for (var i = animationNodes.length - 1; i >= 0; i--) {
       tempNode = animationNodes[i];
       tempNode.style.visibility = 'hidden';
     }
-    that.animate.lock = false;
   }
 
   function removeChildren(parentNode) {
@@ -858,6 +944,8 @@
       removeHandler(element, type);
     });
   };
+
+  that.animate.applyAnimationBySequence = applyAnimationBySequence;
 
   that.views.loadResources();
 

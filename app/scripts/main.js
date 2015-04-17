@@ -5,32 +5,45 @@
       that   = summer,
       _shadowEle = document.createElement('div'),
       animationNodes = document.querySelectorAll('.pre-animation'),
-      tips  = document.querySelector('.tips');
+      tips  = document.querySelector('.tips'),
+      container = document.querySelector('.view-container');
   that.views = {
     init: function() {
-      var pageNode, size,
-          views   = that.views,
-          page    = window.location.hash,
-          pageNum = parseInt(page.slice(1)),
-          paint   = that.paint;
-      pageNode = document.querySelector('.page' + pageNum);
-      if(page === '') {
-        pageNum = 1;
-        window.location.hash = 0;
-      }else{
-        views.pageInit(pageNum);
-      }
+      var pageNode, size, pageNum,
+          views    = that.views,
+          pageNodes= document.querySelectorAll('.page'),
+          len      = pageNodes.length;
+      views.pageNodes = pageNodes;
+      views.pageInit();
+      pageNum = views.pageNum;
+      pageNode = views.pageNode;
       size = views.getSize(pageNode);
       if(!size) {
         return;
       }
       views.height = size.height;
       views.width = size.width;
-      views.pageNum = pageNum;
-      paint.init(pageNode, pageNum);
+
+      if((views.width / views.height) > 0.6 && views.width >= 1024) {
+        views.isWidthView = true;
+        views.width = views.height * 0.6;
+        container.style.width = views.width + 'px';
+      }
+
+      views.memberInit();
+
+      for(var x = 0; x < len; x++) {
+        eventHandler.addHandler(pageNodes[x], 'tap', function() {
+          return false;
+        });
+      }
+
       eventHandler.addHandler(tips, 'click',
         that.animate.paging.call(null, pageNum)
       );
+
+      views.loadResources();
+
     },
     getSize: function(node) {
       var width, height;
@@ -44,14 +57,27 @@
         height: Math.ceil(height)
       };
     },
-    pageInit: function(pageNum) {
-      var pageNode = document.querySelector('.page' + pageNum),
-          prevPage;
-      if(pageNum > 0 && pageNum <= 7) {
-        prevPage = document.querySelector('.page' + (pageNum - 1));
+    pageInit: function() {
+      var pageNode, pageNodes,
+          _page  = window.location.hash,
+          page   = (_page === '') ? '#1' : _page,
+          pageNum= parseInt(page.slice(1)),
+          views  = that.views,
+          paint  = that.paint;
+      pageNode = document.querySelector('.page' + pageNum);
+      if(pageNum >= 0 && pageNum <= 7) {
+        pageNodes = views.pageNodes;
+        if(!pageNodes) {
+          return;
+        }
+        for(var x = 0; x < pageNodes.length; x ++) {
+          pageNodes[x].style.display = 'none';
+        }
         pageNode.style.display = 'block';
-        prevPage.style.display = 'none';
+        views.pageNum = pageNum;
+        views.pageNode = pageNode;
       }
+      paint.init(pageNode, pageNum);
     },
     //针对屏幕尺寸改变的情况，重新计算宽高
     pageRepaint: function() {
@@ -62,13 +88,12 @@
     },
     pageOneInit: function() {
       var views = that.views,
-          width = views.width,
           height= views.height,
           shoes = document.querySelector('.shoes'),
           artText = document.querySelector('.art-text');
       shoes.style.top = (119 / 200) * height - 50 + 'px';
-      artText.style.width = width * 0.5 + 'px';
-      artText.style.height = width * 0.5 - 6 + 'px';
+      artText.style.width = height * 0.3 + 'px';
+      artText.style.height = height * 0.3 - 6 + 'px';
     },
     pageFourInit: function() {
       var views = that.views,
@@ -83,16 +108,37 @@
       icecream.style.height = nodeHeight = 'px';
       icecream.style.width  = nodeHeight * icecreamSize + 'px';
     },
+    pageSixInit: function() {
+      var views  = that.views,
+          height = views.height,
+          size   = height * 0.8,
+          listItems = document.querySelectorAll('.page6-body .list-item'),
+          nodeHeight = 0,
+          node, margin;
+      for(var x = 0; x < listItems.length; x ++) {
+        node = listItems[x];
+        nodeHeight += node.getBoundingClientRect().height;
+      }
+      margin = (size - nodeHeight) / 5;
+      for(var i = 0; i < listItems.length; i ++){
+        node = listItems[i];
+        node.style.marginBottom = margin + 'px';
+      }
+    },
     memberInit: function() {
       var memberNodes = document.querySelectorAll('.member'),
-          memberNode  = memberNodes[0],
-          size   = memberNode.getBoundingClientRect(),
-          width  = size.width,
-          applyButton = memberNodes[4];
-      for (var i = 0; i < memberNodes.length; i++) {
-        memberNodes[i].style.height = width + 'px';
+          views       = that.views,
+          width       = views.width * 0.22,
+          tempNode;
+      if(that.views.member) {
+        return;
       }
-      setApplyButton(applyButton, width);
+      for (var i = 0; i < memberNodes.length; i++) {
+        tempNode = memberNodes[i];
+        tempNode.style.height = width + 'px';
+        tempNode.style.width  = width + 'px';
+      }
+      that.views.memeber = true;
     },
     /**
      * 需要预加载的内容放在这里
@@ -197,17 +243,7 @@
           height= canvasNode.height,
           views = that.views,
           animateFn;
-      ctx.save();
       animateFn = that.animate.page;
-      if(pageNum === 1){
-        setTimeout(function() {
-          preparationAnimate();
-          animateFn();
-        }, 400);
-      } else {
-        preparationAnimate();
-        animateFn();
-      }
       switch (pageNum) {
         case 1:
           views.pageOneInit();
@@ -227,11 +263,23 @@
           drawPageFive(ctx, width, height);
           break;
         case 6:
+          views.pageSixInit();
           drawPageSix(ctx, width, height);
           break;
         case 7:
-          views.memberInit();
+          var applyButton = document.querySelector('.apply-button'),
+              _width      = views.width * 0.22;
+          setApplyButton(applyButton, _width);
           break;
+      }
+      if(pageNum === 1){
+        setTimeout(function() {
+          preparationAnimate();
+          animateFn();
+        }, 400);
+      } else {
+        preparationAnimate();
+        animateFn();
       }
     },
     /**
@@ -328,15 +376,15 @@
           tips.style.display = 'none';
           currentPage = document.querySelector('.page' + num);
           nextPage = document.querySelector('.page' + (num + 1));
-          removeClass(currentPage, 'bounceInRight');
-          addClass(currentPage, 'fadeOutLeft animated');
+          removeClass(currentPage, 'bounceInUp');
+          addClass(currentPage, 'fadeOutUp animated');
           that.paint.init(nextPage, num + 1);
           nextPage.style.display = 'block';
-          addClass(nextPage, 'bounceInRight animated');
+          addClass(nextPage, 'bounceInUp animated');
           eventHandler.oneHandler(currentPage, 'webkitAnimationEnd animationend', function() {
             currentPage.style.display = 'none';
             window.location.hash = num + 1;
-            removeClass(currentPage, 'fadeOutLeft animated');
+            removeClass(currentPage, 'fadeOutUp animated');
           });
         }else {
           return;
@@ -708,7 +756,14 @@
     lastNode = arrayList[len - 1].ele;
     eventHandler.oneHandler(lastNode, 'webkitAnimationEnd animationend', function() {
       setTimeout(function() {
-        tips.style.display = 'block';
+        var pageNum = that.views.pageNum,
+            pageNode= that.views.pageNode;
+        if(pageNum < 7) {
+          tips.style.display = 'block';
+          eventHandler.swipeUpHandler(pageNode,
+            that.animate.paging.call(null, pageNum)
+          );
+        }
       }, 200);
     });
   }
@@ -953,19 +1008,52 @@
     });
   };
 
-  that.animate.applyAnimationBySequence = applyAnimationBySequence;
+  eventHandler.swipeUpHandler = function(element, handler) {
+    var startY,
+        dist,
+        threshold = -70,
+        allowedTime = 500,
+        elapsedTime,
+        startTime;
 
-  that.views.loadResources();
+    element.addEventListener('touchstart', function(e){
+        var touchobj = e.changedTouches[0];
+        dist = 0;
+        startY = touchobj.pageY;
+        startTime = new Date().getTime();
+        e.preventDefault();
+    }, false);
+
+    element.addEventListener('touchmove', function(e){
+        e.preventDefault();
+    }, false);
+
+    element.addEventListener('touchend', function(e){
+        var touchobj = e.changedTouches[0];
+        dist = touchobj.pageY - startY;
+        elapsedTime = new Date().getTime() - startTime;
+        var swipeBol = (elapsedTime <= allowedTime && dist <= threshold);
+        if(swipeBol) {
+          handler();
+        }else {
+          return false;
+        }
+        e.preventDefault();
+    }, false);
+  };
+
+  that.animate.applyAnimationBySequence = applyAnimationBySequence;
 
   window.onresize = function() {
     that.views.pageRepaint();
   };
 
   window.onload = function() {
+    window.location.hash = '0';
     that.views.init();
   };
   window.onhashchange = function() {
-    that.views.init();
+    that.views.pageInit();
   };
 
 })(window, document);

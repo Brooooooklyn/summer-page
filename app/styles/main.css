@@ -217,6 +217,7 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
+  margin: auto;
   display: none;
 }
 
@@ -670,7 +671,7 @@ body {
   width: 40px;
   height: 40px;
   z-index: 2;
-  position: absolute;
+  position: fixed;
   display: none;
   right: 0;
   left: 0;
@@ -681,27 +682,65 @@ body {
   -ms-animation: upArrow 1.5s infinite ease-in-out;
   animation: upArrow 1.5s infinite ease-in-out;
 }
+
+.show-phone-background{
+  width: 380px;
+  height: 810px;
+  position: absolute;
+  background: url(../images/phone-case.png);
+  background-size: cover;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+}
+
+.show-phone-background .page{
+  width: 328px;
+  height: 576px;
+  border: 4px solid black;
+  background: white;
+}
+.show-phone-background .page0{
+  background: #383838;
+}
+
+.show-phone-background .page7{
+  background-image: url(../images/page7_background.png);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: bottom center;
+}
+
 .ziqiu{
   background-image: url(../images/page7-member-ziqiu.png);
 }
+
 .zitian{
   background-image: url(../images/page7-member-zitian.png);
 }
+
 .xuanxuan{
   background-image: url(../images/page7-member-xuanxuan.png);
 }
+
 .jay{
   background-image: url(../images/page7-member-jay.png);
 }
+
 .yaqian{
   background-image: url(../images/page7-member-yaqian.png);
 }
+
 .junyuan{
   background-image: url(../images/page7-member-junyuan.png);
 }
+
 .cunzhi{
   background-image: url(../images/page7-member-cunzhi.png);
 }
+
 .yuhan{
   background-image: url(../images/page7-member-yuhan.png);
 }

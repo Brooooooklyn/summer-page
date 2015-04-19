@@ -24,10 +24,12 @@
       views.height = size.height;
       views.width = size.width;
 
-      if((views.width / views.height) > 0.6 && views.width >= 1024) {
+      if((views.width / views.height) > 0.6) {
+        var phoneCase = document.querySelector('.phone-case');
+        phoneCase.classList.add('show-phone-background');
         views.isWidthView = true;
-        views.width = views.height * 0.6;
-        container.style.width = views.width + 'px';
+        views.width = 328;
+        views.height = 576;
       }
 
       views.memberInit();

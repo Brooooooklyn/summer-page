@@ -5,8 +5,7 @@
       that   = summer,
       _shadowEle = document.createElement('div'),
       animationNodes = document.querySelectorAll('.pre-animation'),
-      tips  = document.querySelector('.tips'),
-      container = document.querySelector('.view-container');
+      tips  = document.querySelector('.tips');
   that.views = {
     init: function() {
       var pageNode, size, pageNum,

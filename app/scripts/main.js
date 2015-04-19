@@ -3,29 +3,49 @@
   'use strict';
   var summer = window.summer || (window.summer = {}),
       that   = summer,
-      _shadowEle = document.createElement('div');
+      _shadowEle = document.createElement('div'),
+      animationNodes = document.querySelectorAll('.pre-animation'),
+      tips  = document.querySelector('.tips'),
+      container = document.querySelector('.view-container');
   that.views = {
     init: function() {
-      var pageNode, size,
-          views   = that.views,
-          page    = window.location.hash,
-          pageNum = parseInt(page.slice(1)),
-          paint   = that.paint;
-      pageNode = document.querySelector('.page' + pageNum);
-      if(page === '') {
-        pageNum = 1;
-        window.location.hash = 0;
-      }else{
-        views.pageInit(pageNode);
-      }
+      var pageNode, size, pageNum,
+          views    = that.views,
+          pageNodes= document.querySelectorAll('.page'),
+          len      = pageNodes.length;
+      views.pageNodes = pageNodes;
+      views.pageInit();
+      pageNum = views.pageNum;
+      pageNode = views.pageNode;
       size = views.getSize(pageNode);
       if(!size) {
         return;
       }
       views.height = size.height;
       views.width = size.width;
-      preparationAnimate();
-      paint.init(pageNode, pageNum);
+
+      if((views.width / views.height) > 0.6) {
+        var phoneCase = document.querySelector('.phone-case');
+        phoneCase.classList.add('show-phone-background');
+        views.isWidthView = true;
+        views.width = 328;
+        views.height = 576;
+      }
+
+      views.memberInit();
+
+      for(var x = 0; x < len; x++) {
+        eventHandler.addHandler(pageNodes[x], 'tap', function() {
+          return false;
+        });
+      }
+
+      eventHandler.addHandler(tips, 'click',
+        that.animate.paging.call(null, pageNum)
+      );
+
+      views.loadResources();
+
     },
     getSize: function(node) {
       var width, height;
@@ -39,13 +59,27 @@
         height: Math.ceil(height)
       };
     },
-    pageInit: function(pageNode) {
-      var pages = document.querySelectorAll('.page'),
-          currentPage = pageNode;
-      for (var i = pages.length - 1; i >= 0; i--) {
-        pages[i].style.display = 'none';
+    pageInit: function() {
+      var pageNode, pageNodes,
+          _page  = window.location.hash,
+          page   = (_page === '') ? '#1' : _page,
+          pageNum= parseInt(page.slice(1)),
+          views  = that.views,
+          paint  = that.paint;
+      pageNode = document.querySelector('.page' + pageNum);
+      if(pageNum >= 0 && pageNum <= 7) {
+        pageNodes = views.pageNodes;
+        if(!pageNodes) {
+          return;
+        }
+        for(var x = 0; x < pageNodes.length; x ++) {
+          pageNodes[x].style.display = 'none';
+        }
+        pageNode.style.display = 'block';
+        views.pageNum = pageNum;
+        views.pageNode = pageNode;
       }
-      currentPage.style.display = 'block';
+      paint.init(pageNode, pageNum);
     },
     //针对屏幕尺寸改变的情况，重新计算宽高
     pageRepaint: function() {
@@ -56,24 +90,57 @@
     },
     pageOneInit: function() {
       var views = that.views,
-          width = views.width,
           height= views.height,
           shoes = document.querySelector('.shoes'),
           artText = document.querySelector('.art-text');
       shoes.style.top = (119 / 200) * height - 50 + 'px';
-      artText.style.width = width * 0.5 + 'px';
-      artText.style.height = width * 0.5 - 6 + 'px';
+      artText.style.width = height * 0.3 + 'px';
+      artText.style.height = height * 0.3 - 6 + 'px';
+    },
+    pageFourInit: function() {
+      var views = that.views,
+          height= views.height,
+          popsicle = document.querySelector('.page4-popsicle'),
+          icecream = document.querySelector('.page4-ice-cream'),
+          popsicleSize = 0.55,
+          icecreamSize = 0.575,
+          nodeHeight = height * 0.14;
+      popsicle.style.height = nodeHeight + 'px';
+      popsicle.style.width  = nodeHeight * popsicleSize + 'px';
+      icecream.style.height = nodeHeight = 'px';
+      icecream.style.width  = nodeHeight * icecreamSize + 'px';
+    },
+    pageSixInit: function() {
+      var views  = that.views,
+          height = views.height,
+          size   = height * 0.8,
+          listItems = document.querySelectorAll('.page6-body .list-item'),
+          nodeHeight = 0,
+          node, margin;
+      for(var x = 0; x < listItems.length; x ++) {
+        node = listItems[x];
+        nodeHeight += node.getBoundingClientRect().height;
+      }
+      margin = (size - nodeHeight) / 5;
+      for(var i = 0; i < listItems.length; i ++){
+        node = listItems[i];
+        node.style.marginBottom = margin + 'px';
+      }
     },
     memberInit: function() {
       var memberNodes = document.querySelectorAll('.member'),
-          memberNode  = memberNodes[0],
-          size   = memberNode.getBoundingClientRect(),
-          width  = size.width,
-          applyButton = memberNodes[4];
-      for (var i = 0; i < memberNodes.length; i++) {
-        memberNodes[i].style.height = width + 'px';
+          views       = that.views,
+          width       = views.width * 0.22,
+          tempNode;
+      if(that.views.member) {
+        return;
       }
-      setApplyButton(applyButton, width);
+      for (var i = 0; i < memberNodes.length; i++) {
+        tempNode = memberNodes[i];
+        tempNode.style.height = width + 'px';
+        tempNode.style.width  = width + 'px';
+      }
+      that.views.memeber = true;
     },
     /**
      * 需要预加载的内容放在这里
@@ -101,7 +168,15 @@
       '../images/page6_icon_message.png',
       '../images/page6_icon_smile.png',
       '../images/page7_background.png',
-      '../images/page7_logo.png'
+      '../images/page7_logo.png',
+      '../images/page7-member-ziqiu.png',
+      '../images/page7-member-zitian.png',
+      '../images/page7-member-xuanxuan.png',
+      '../images/page7-member-jay.png',
+      '../images/page7-member-yaqian.png',
+      '../images/page7-member-junyuan.png',
+      '../images/page7-member-cunzhi.png',
+      '../images/page7-member-yuhan.png'
     ],
     /**
      * 预加载方法，内部会判断当前页面的hash来判断是刷新页面还是初始化页面
@@ -170,11 +245,7 @@
           height= canvasNode.height,
           views = that.views,
           animateFn;
-      ctx.save();
-      animateFn = that.animate['page' + pageNum];
-      if(animateFn) {
-        animateFn();
-      }
+      animateFn = that.animate.page;
       switch (pageNum) {
         case 1:
           views.pageOneInit();
@@ -187,17 +258,30 @@
           drawPageThree(ctx, width, height);
           break;
         case 4:
+          views.pageFourInit();
           drawPageFour(ctx, width, height);
           break;
         case 5:
           drawPageFive(ctx, width, height);
           break;
         case 6:
+          views.pageSixInit();
           drawPageSix(ctx, width, height);
           break;
         case 7:
-          views.memberInit();
+          var applyButton = document.querySelector('.apply-button'),
+              _width      = views.width * 0.22;
+          setApplyButton(applyButton, _width);
           break;
+      }
+      if(pageNum === 1){
+        setTimeout(function() {
+          preparationAnimate();
+          animateFn();
+        }, 400);
+      } else {
+        preparationAnimate();
+        animateFn();
       }
     },
     /**
@@ -275,16 +359,40 @@
   };
 
   that.animate = {
-    page1: function() {
-      var animateClass1, animateClass2, arrayList1, arrayList2;
-      animateClass1 = ['.art-text', '.text-node-1', '.text-node-2'];
-      animateClass2 = ['.shoes', '.page1-logo'];
-      arrayList1 = animatedSequence(animateClass1);
-      applyAnimationBySequence(arrayList1);
-      arrayList2 = animatedSequence(animateClass2);
-      applyAnimationBySequence(arrayList2);
+    page: function() {
+      var page, animateClass, arrayList;
+      page = that.views.pageNum;
+      animateClass = document.querySelectorAll('.page' + page + ' .pre-animation');
+      if(animateClass.length === 0) {
+        return;
+      }
+      arrayList = animatedSequence(animateClass);
+      applyAnimationByTime(arrayList);
     },
-    lock: false
+    lock: false,
+    paging: function() {
+      return function() {
+        var currentPage, nextPage, num;
+        num = that.views.pageNum;
+        if(num < 7) {
+          tips.style.display = 'none';
+          currentPage = document.querySelector('.page' + num);
+          nextPage = document.querySelector('.page' + (num + 1));
+          removeClass(currentPage, 'bounceInUp');
+          addClass(currentPage, 'fadeOutUp animated');
+          that.paint.init(nextPage, num + 1);
+          nextPage.style.display = 'block';
+          addClass(nextPage, 'bounceInUp animated');
+          eventHandler.oneHandler(currentPage, 'webkitAnimationEnd animationend', function() {
+            currentPage.style.display = 'none';
+            window.location.hash = num + 1;
+            removeClass(currentPage, 'fadeOutUp animated');
+          });
+        }else {
+          return;
+        }
+      };
+    }
   };
 
   function imgLoaded() {
@@ -302,7 +410,9 @@
 
   function resourcesCompleted(pageNum) {
     var currentPageNode = document.querySelector('.page0');
-    addClass(currentPageNode, 'fade');
+    setTimeout(function() {
+      addClass(currentPageNode, 'fade');
+    }, 600);
     eventHandler.addHandler(currentPageNode, 'transitionend', function() {
       window.location.hash = pageNum;
     });
@@ -599,15 +709,13 @@
   }
 
   function animatedSequence(animateClassList) {
-    var x, len, className, nextClass, ele, nextEle, arrayList, arrayNode, iteratorFn;
+    var x, len, ele, nextEle, arrayList, arrayNode, iteratorFn;
     len = animateClassList.length;
     arrayList = {length: 0};
     for(x = 0; x < len; x++) {
-      className = animateClassList[x];
-      ele = document.querySelector(className);
+      ele = animateClassList[x];
       if(x < len - 1){
-        nextClass = animateClassList[x + 1];
-        nextEle = document.querySelector(nextClass);
+        nextEle = animateClassList[x + 1];
       } else if(x === len - 1){
         nextEle = null;
       }
@@ -636,6 +744,39 @@
     }
   }
 
+  function applyAnimationByTime(arrayList) {
+    var x, len, firstEle, lastNode, currentNode, delay;
+    len = arrayList.length;
+    firstEle = arrayList[0].ele;
+    addClass(firstEle, 'animated');
+    firstEle.style.visibility = 'visible';
+    delay = 100;
+    for(x = 1; x < len; x++) {
+      currentNode = arrayList[x].ele;
+      setTimeout(animationDelayBind.call(null, currentNode) ,delay * x);
+    }
+    lastNode = arrayList[len - 1].ele;
+    eventHandler.oneHandler(lastNode, 'webkitAnimationEnd animationend', function() {
+      setTimeout(function() {
+        var pageNum = that.views.pageNum,
+            pageNode= that.views.pageNode;
+        if(pageNum < 7) {
+          tips.style.display = 'block';
+          eventHandler.swipeUpHandler(pageNode,
+            that.animate.paging.call(null, pageNum)
+          );
+        }
+      }, 200);
+    });
+  }
+
+  function animationDelayBind(currentNode) {
+    return function() {
+      currentNode.style.visibility = 'visible';
+      addClass(currentNode, 'animated');
+    };
+  }
+
   function animationEndBind(_ele) {
     return function(ele, nextEle, position) {
       eventHandler.oneHandler(_ele, 'webkitAnimationEnd animationend',
@@ -654,21 +795,31 @@
       if(lock) {
         removeClass(ele, 'animated');
         if(nextEle) {
+          that.animate.lock = true;
           nextEle.style.visibility = 'visible';
           addClass(nextEle, 'animated');
+        }else {
+          that.animate.lock = false;
+          setTimeout(function() {
+            tips.style.display = 'block';
+          }, 500);
         }
+      }else {
+        setTimeout(function() {
+          tips.style.display = 'block';
+        }, 500);
       }
     };
   }
 
   function preparationAnimate() {
-    var animationNodes = document.querySelectorAll('.pre-animation'),
-        tempNode;
+    var tempNode;
+    tips.style.display = 'none';
+    that.animate.lock = false;
     for (var i = animationNodes.length - 1; i >= 0; i--) {
       tempNode = animationNodes[i];
       tempNode.style.visibility = 'hidden';
     }
-    that.animate.lock = false;
   }
 
   function removeChildren(parentNode) {
@@ -859,17 +1010,52 @@
     });
   };
 
-  that.views.loadResources();
+  eventHandler.swipeUpHandler = function(element, handler) {
+    var startY,
+        dist,
+        threshold = -70,
+        allowedTime = 500,
+        elapsedTime,
+        startTime;
+
+    element.addEventListener('touchstart', function(e){
+        var touchobj = e.changedTouches[0];
+        dist = 0;
+        startY = touchobj.pageY;
+        startTime = new Date().getTime();
+        e.preventDefault();
+    }, false);
+
+    element.addEventListener('touchmove', function(e){
+        e.preventDefault();
+    }, false);
+
+    element.addEventListener('touchend', function(e){
+        var touchobj = e.changedTouches[0];
+        dist = touchobj.pageY - startY;
+        elapsedTime = new Date().getTime() - startTime;
+        var swipeBol = (elapsedTime <= allowedTime && dist <= threshold);
+        if(swipeBol) {
+          handler();
+        }else {
+          return false;
+        }
+        e.preventDefault();
+    }, false);
+  };
+
+  that.animate.applyAnimationBySequence = applyAnimationBySequence;
 
   window.onresize = function() {
     that.views.pageRepaint();
   };
 
   window.onload = function() {
+    window.location.hash = '0';
     that.views.init();
   };
   window.onhashchange = function() {
-    that.views.init();
+    that.views.pageInit();
   };
 
 })(window, document);

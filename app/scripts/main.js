@@ -23,7 +23,7 @@
       views.height = size.height;
       views.width = size.width;
 
-      if((views.width / views.height) > 0.6) {
+      if((views.width / views.height) > 0.7) {
         var phoneCase = document.querySelector('.phone-case');
         phoneCase.classList.add('show-phone-background');
         views.isWidthView = true;
@@ -146,6 +146,7 @@
      * @type {Array}
      */
     resources: [
+      '../images/phone-case.png',
       '../images/page1_art_text.png',
       '../images/page1_shoes.png',
       '../images/page1_logo.png',
@@ -394,6 +395,15 @@
     }
   };
 
+  window.requestAnimFrame = (function(){
+    return  window.requestAnimationFrame       ||
+            window.webkitRequestAnimationFrame ||
+            window.mozRequestAnimationFrame    ||
+            function( callback ){
+              window.setTimeout(callback, 1000 / 60);
+            };
+    })();
+
   function imgLoaded() {
     var views = that.views,
         page, pageNum, _pageNum, len;
@@ -408,14 +418,14 @@
   }
 
   function resourcesCompleted(pageNum) {
-    var currentPageNode = document.querySelector('.page0');
+    var loadingAnimationNode = document.querySelector('.page0 .loading-wrap');
     setTimeout(function() {
-      addClass(currentPageNode, 'fade');
+      addClass(loadingAnimationNode, 'fade');
     }, 600);
-    eventHandler.addHandler(currentPageNode, 'transitionend', function() {
+    eventHandler.addHandler(loadingAnimationNode, 'transitionend', function() {
       window.location.hash = pageNum;
     });
-    eventHandler.addHandler(currentPageNode, 'webkitTransitionEnd', function() {
+    eventHandler.addHandler(loadingAnimationNode, 'webkitTransitionEnd', function() {
       window.location.hash = pageNum;
     });
   }
@@ -687,7 +697,7 @@
     var oldApplyNode   = document.querySelector('.apply'),
         applyChildNode1= document.createElement('SPAN'),
         applyChildNode2= document.createElement('SPAN'),
-        applyTextNode1 = document.createTextNode('点击'),
+        applyTextNode1 = document.createTextNode('如何'),
         applyTextNode2 = document.createTextNode('申请'),
         tempNode       = document.createDocumentFragment(),
         childNodeHeight, parentHeight, margin, fontSize;
@@ -705,6 +715,7 @@
     fontSize = parentHeight / 4;
     node.style.fontSize = fontSize + 'px';
     applyChildNode1.style.marginTop = margin + 'px';
+    eventHandler.addHandler(node, 'click', openForm);
   }
 
   function animatedSequence(animateClassList) {
@@ -819,6 +830,25 @@
       tempNode = animationNodes[i];
       tempNode.style.visibility = 'hidden';
     }
+  }
+
+  function openForm() {
+    var formNode = document.querySelector('.apply-form'),
+        formBackground = document.querySelector('.apply-background'),
+        formBody = document.querySelector('.form-body'),
+        bodyH;
+    formNode.style.visibility = 'visible';
+    formBackground.style.visibility = 'visible';
+    bodyH = formBody.getBoundingClientRect().height;
+    formBody.style.height = bodyH + 30 + 'px';
+    formBody.style.maxHeight = '150px';
+    formBody.style.transform = 'translateY(-150px) translateZ(0)';
+    window.setTimeout(function() {
+      formBody.style.transition = 'all 500ms';
+      formBody.style.maxHeight = bodyH + 30 + 'px';
+      formBody.style.transform = 'translateY(-' + 0 + 'px) translateZ(0)';
+    }, 218);
+    formNode.style.height = bodyH + 180 + 'px';
   }
 
   function removeChildren(parentNode) {

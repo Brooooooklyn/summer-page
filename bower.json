@@ -2,6 +2,6 @@
   "name": "summer",
   "private": true,
   "dependencies": {
-    "animate.css": "daneden/animate.css#~3.2.6"
+    "animate.css": "Brooooooklyn/animate.css"
   }
 }

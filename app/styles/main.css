@@ -153,10 +153,6 @@ body {
   height: 100%;
   background: #383838;
   display: block;
-  -webkit-transition: -webkit-transform 218ms ease-in-out, opacity 218ms ease-in-out;
-  -o-transition: -webkit-transform 218ms ease-in-out, opacity 218ms ease-in-out;
-  transition: -webkit-transform 218ms ease-in-out, opacity 218ms ease-in-out;
-  -moz-transition: all 0.2s ease-out;
 }
 
 .view-container .fade{
@@ -166,6 +162,27 @@ body {
   transform: scale(1.5);
   opacity: 0;
   filter: alpha(opacity=0);
+}
+
+.view-container .loading-wrap{
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  -webkit-transition: -webkit-transform 218ms ease-in-out, opacity 218ms ease-in-out;
+  -o-transition: -webkit-transform 218ms ease-in-out, opacity 218ms ease-in-out;
+  transition: -webkit-transform 218ms ease-in-out, opacity 218ms ease-in-out;
+  -moz-transition: all 0.2s ease-out;
+}
+
+.page-wrap{
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  margin: auto;
 }
 
 .page0 .logo{
@@ -217,8 +234,8 @@ body {
   left: 0;
   width: 100%;
   height: 100%;
-  margin: auto;
   display: none;
+  overflow: hidden;
 }
 
 .page1 .art-text{
@@ -653,6 +670,95 @@ body {
 
 .page7 .apply{
   background: #359ED3;
+  cursor: pointer;
+}
+
+.page7 .apply-background{
+  position: absolute;
+  margin: 0;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.6);
+  visibility: hidden;
+}
+
+.page7 .apply-form{
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+  width: 90%;
+  border-radius: 5px;
+  visibility: hidden;
+  z-index: 3;
+}
+
+.page7 .form-header{
+  position: absolute;
+  width: 100%;
+  z-index: 3
+}
+
+.page7 .form-header .form-header-background{
+  background: url(../images/project.jpg);
+  background-size: cover;
+  width: 100%;
+  height: 150px;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+}
+
+.page7 .form-header .header-text{
+  position: absolute;
+  top: 0;
+  font-size: 1.5em;
+  font-weight: 700;
+  margin: auto;
+  color: white;
+  width: 100%;
+  height: 50px;
+  background-image: linear-gradient(rgba(0, 0, 0, 0.298039) 0px, rgba(0, 0, 0, 0) 100%);
+}
+
+.page7 .form-header .header-text .text{
+  position: relative;
+  top: 10px;
+  left: 10px;
+}
+
+.page7 .form-body{
+  margin: auto;
+  position: absolute;
+  width: 100%;
+  top: 150px;
+  display: inline-block;
+  background: white;
+  border-bottom-left-radius: 3px;
+  border-bottom-right-radius: 3px;
+  backface-visibility: hidden;
+  z-index: 2;
+}
+
+.page7 .form-body .info{
+  margin: 15px 10px 0 10px;
+  text-align: left;
+}
+
+.page7 .form-body .love{
+  font-size: 1.8em;
+  font-weight: 500;
+  color: black;
+}
+
+.page7 .form-text{
+  font-size: 1em;
+  display: block;
+  text-align: center;
+  margin-top: 10px;
 }
 
 .clearfix:before {
@@ -687,20 +793,22 @@ body {
   width: 380px;
   height: 810px;
   position: absolute;
-  background: url(../images/phone-case.png);
-  background-size: cover;
+  background: url(../images/phone-case.png) no-repeat right top;
+  background-size: contain;
   left: 0;
   right: 0;
   top: 0;
   bottom: 0;
   margin: auto;
+  overflow: hidden;
 }
 
 .show-phone-background .page{
-  width: 328px;
-  height: 576px;
+  width: 320px;
+  height: 568px;
   border: 4px solid black;
   background: white;
+  overflow: hidden;
 }
 .show-phone-background .page0{
   background: #383838;
@@ -711,6 +819,17 @@ body {
   background-repeat: no-repeat;
   background-size: cover;
   background-position: bottom center;
+}
+
+.show-phone-background .tips{
+  position: absolute;
+  margin-bottom: 117px;
+}
+
+.show-phone-background .page-wrap{
+  width: 328px;
+  height: 576px;
+  overflow: hidden;
 }
 
 .ziqiu{

@@ -50,6 +50,31 @@ gulp.task('images', function () {
     .pipe(gulp.dest('dist/images'));
 });
 
+gulp.task('animate-lib', function () {
+  var categories = require('./animate-config.json'),
+      category, files, file,
+      target = [ 'bower_components/animate.css/source/_base.css' ],
+      count = 0;
+  for ( category in categories ) {
+    if ( categories.hasOwnProperty(category) ) {
+      files = categories[category]
+      for (file in files) {
+        if ( files.hasOwnProperty(file) && files[file] ) {
+          target.push('bower_components/animate.css/source/' + category + '/' + file + '.css');
+          count += 1;
+        }
+      }
+    }
+  }
+
+  return gulp.src(target)
+    .pipe($.concat('animate.css'))
+    .pipe($.postcss([
+      require('autoprefixer-core')({browsers: ['last 1 version']})
+    ]))
+    .pipe(gulp.dest('.tmp/styles'));
+});
+
 gulp.task('fonts', function () {
   return gulp.src(require('main-bower-files')({
     filter: '**/*.{eot,svg,ttf,woff,woff2}'
@@ -77,7 +102,8 @@ gulp.task('serve', ['styles', 'fonts'], function () {
       baseDir: ['.tmp', 'app'],
       routes: {
         '/bower_components': 'bower_components',
-        '/dist': 'dist'
+        '/dist': 'dist',
+        '/.tmp': '.tmp'
       }
     }
   });
@@ -106,7 +132,7 @@ gulp.task('wiredep', function () {
     .pipe(gulp.dest('app'));
 });
 
-gulp.task('build', ['jshint', 'html', 'images', 'fonts', 'extras'], function () {
+gulp.task('build', ['html', 'images', 'jshint', 'fonts', 'extras', 'animate-lib'], function () {
   return gulp.src('dist/**/*').pipe($.size({title: 'build', gzip: true}));
 });
 

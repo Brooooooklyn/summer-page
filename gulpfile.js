@@ -70,7 +70,7 @@ gulp.task('animate-lib', function () {
   return gulp.src(target)
     .pipe($.concat('animate.css'))
     .pipe($.postcss([
-      require('autoprefixer-core')({browsers: ['last 1 version']})
+      require('autoprefixer-core')({browsers: ['last 2 version']})
     ]))
     .pipe(gulp.dest('.tmp/styles'));
 });

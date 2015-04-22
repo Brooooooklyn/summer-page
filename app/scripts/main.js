@@ -23,7 +23,7 @@
       views.height = size.height;
       views.width = size.width;
 
-      if((views.width / views.height) > 0.7) {
+      if((views.width / views.height) > 0.8) {
         var phoneCase = document.querySelector('.phone-case');
         phoneCase.classList.add('show-phone-background');
         views.isWidthView = true;
@@ -64,7 +64,8 @@
           page   = (_page === '') ? '#1' : _page,
           pageNum= parseInt(page.slice(1)),
           views  = that.views,
-          paint  = that.paint;
+          paint  = that.paint,
+          animateFn = that.animate.page;
       pageNode = document.querySelector('.page' + pageNum);
       if(pageNum >= 0 && pageNum <= 7) {
         pageNodes = views.pageNodes;
@@ -75,10 +76,22 @@
           pageNodes[x].style.display = 'none';
         }
         pageNode.style.display = 'block';
+        if(views.pageNum !== undefined) {
+          if(pageNum === 1){
+            setTimeout(function() {
+              preparationAnimate();
+              animateFn();
+            }, 400);
+          } else {
+            views.pageNum = pageNum;
+            preparationAnimate();
+            animateFn();
+          }
+        }
         views.pageNum = pageNum;
         views.pageNode = pageNode;
+        paint.init(pageNode, pageNum);
       }
-      paint.init(pageNode, pageNum);
     },
     //针对屏幕尺寸改变的情况，重新计算宽高
     pageRepaint: function() {
@@ -146,37 +159,37 @@
      * @type {Array}
      */
     resources: [
-      '../images/phone-case.png',
-      '../images/page1_art_text.png',
-      '../images/page1_shoes.png',
-      '../images/page1_logo.png',
-      '../images/page1_footer.jpg',
-      '../images/page2_icon_t.png',
-      '../images/page2_icon_location.png',
-      '../images/page2_icon_people.png',
-      '../images/page3_icon_t.png',
-      '../images/page3_icon_talk.png',
-      '../images/page3_icon_today.png',
-      '../images/page4_ice_cream.png',
-      '../images/page4_popsicle.png',
-      '../images/page5_icon_umbrella.png',
-      '../images/page5_icon_machine.png',
-      '../images/page5_icon_boat.png',
-      '../images/page6_icon_star.png',
-      '../images/page6_icon_bulb.png',
-      '../images/page6_icon_humburg.png',
-      '../images/page6_icon_message.png',
-      '../images/page6_icon_smile.png',
-      '../images/page7_background.png',
-      '../images/page7_logo.png',
-      '../images/page7-member-ziqiu.png',
-      '../images/page7-member-zitian.png',
-      '../images/page7-member-xuanxuan.png',
-      '../images/page7-member-jay.png',
-      '../images/page7-member-yaqian.png',
-      '../images/page7-member-junyuan.png',
-      '../images/page7-member-cunzhi.png',
-      '../images/page7-member-yuhan.png'
+      './images/phone-case.png',
+      './images/page1_art_text.png',
+      './images/page1_shoes.png',
+      './images/page1_logo.png',
+      './images/page1_footer.jpg',
+      './images/page2_icon_t.png',
+      './images/page2_icon_location.png',
+      './images/page2_icon_people.png',
+      './images/page3_icon_t.png',
+      './images/page3_icon_talk.png',
+      './images/page3_icon_today.png',
+      './images/page4_ice_cream.png',
+      './images/page4_popsicle.png',
+      './images/page5_icon_umbrella.png',
+      './images/page5_icon_machine.png',
+      './images/page5_icon_boat.png',
+      './images/page6_icon_star.png',
+      './images/page6_icon_bulb.png',
+      './images/page6_icon_humburg.png',
+      './images/page6_icon_message.png',
+      './images/page6_icon_smile.png',
+      './images/page7_background.png',
+      './images/page7_logo.png',
+      './images/page7-member-ziqiu.png',
+      './images/page7-member-zitian.png',
+      './images/page7-member-xuanxuan.png',
+      './images/page7-member-jay.png',
+      './images/page7-member-yaqian.png',
+      './images/page7-member-junyuan.png',
+      './images/page7-member-cunzhi.png',
+      './images/page7-member-yuhan.png'
     ],
     /**
      * 预加载方法，内部会判断当前页面的hash来判断是刷新页面还是初始化页面
@@ -243,9 +256,7 @@
       var ctx = canvasNode.getContext('2d'),
           width = canvasNode.width,
           height= canvasNode.height,
-          views = that.views,
-          animateFn;
-      animateFn = that.animate.page;
+          views = that.views;
       switch (pageNum) {
         case 1:
           views.pageOneInit();
@@ -273,15 +284,6 @@
               _width      = views.width * 0.22;
           setApplyButton(applyButton, _width);
           break;
-      }
-      if(pageNum === 1){
-        setTimeout(function() {
-          preparationAnimate();
-          animateFn();
-        }, 400);
-      } else {
-        preparationAnimate();
-        animateFn();
       }
     },
     /**
@@ -360,8 +362,9 @@
 
   that.animate = {
     page: function() {
-      var page, animateClass, arrayList;
+      var page, pageNode, animateClass, arrayList;
       page = that.views.pageNum;
+      pageNode = document.querySelector('.page' + page);
       animateClass = document.querySelectorAll('.page' + page + ' .pre-animation');
       if(animateClass.length === 0) {
         return;
@@ -384,7 +387,6 @@
           nextPage.style.display = 'block';
           addClass(nextPage, 'bounceInUp animated');
           eventHandler.oneHandler(currentPage, 'webkitAnimationEnd animationend', function() {
-            currentPage.style.display = 'none';
             window.location.hash = num + 1;
             removeClass(currentPage, 'fadeOutUp animated');
           });
@@ -395,25 +397,14 @@
     }
   };
 
-  window.requestAnimFrame = (function(){
-    return  window.requestAnimationFrame       ||
-            window.webkitRequestAnimationFrame ||
-            window.mozRequestAnimationFrame    ||
-            function( callback ){
-              window.setTimeout(callback, 1000 / 60);
-            };
-    })();
-
   function imgLoaded() {
     var views = that.views,
-        page, pageNum, _pageNum, len;
+        pageNum, len;
     len = views.resourcesCount;
     views.resourcesLoaded += 1;
     if(views.resourcesLoaded === len){
-      page = window.location.hash;
-      pageNum = page === '' ? 1 : parseInt(page.slice(1));
-      _pageNum = pageNum === 0 ? 1 : pageNum;
-      resourcesCompleted(_pageNum);
+      pageNum = views.pageNum === 0 ? 1 : pageNum;
+      resourcesCompleted(pageNum);
     }
   }
 
@@ -422,12 +413,16 @@
     setTimeout(function() {
       addClass(loadingAnimationNode, 'fade');
     }, 600);
-    eventHandler.addHandler(loadingAnimationNode, 'transitionend', function() {
+    eventHandler.addHandler(loadingAnimationNode, 'transitionend webkitTransitionEnd', function() {
       window.location.hash = pageNum;
     });
-    eventHandler.addHandler(loadingAnimationNode, 'webkitTransitionEnd', function() {
-      window.location.hash = pageNum;
-    });
+    setTimeout(function() {
+      var page = window.location.hash;
+      page = parseInt(page.slice(1));
+      if(page !== pageNum){
+        window.location.hash = pageNum;
+      }
+    }, 1000);
   }
 
   function drawPageOne(ctx, width, height) {
@@ -759,14 +754,16 @@
     len = arrayList.length;
     firstEle = arrayList[0].ele;
     addClass(firstEle, 'animated');
-    firstEle.style.visibility = 'visible';
+    setTimeout(function() {
+      firstEle.style.visibility = 'visible';
+    }, 100);
     delay = 100;
     for(x = 1; x < len; x++) {
       currentNode = arrayList[x].ele;
       setTimeout(animationDelayBind.call(null, currentNode) ,delay * x);
     }
     lastNode = arrayList[len - 1].ele;
-    eventHandler.oneHandler(lastNode, 'webkitAnimationEnd animationend', function() {
+    // eventHandler.oneHandler(lastNode, 'webkitAnimationEnd animationend', function() {
       setTimeout(function() {
         var pageNum = that.views.pageNum,
             pageNode= that.views.pageNode;
@@ -776,8 +773,8 @@
             that.animate.paging.call(null, pageNum)
           );
         }
-      }, 200);
-    });
+      }, 1000);
+    // });
   }
 
   function animationDelayBind(currentNode) {
@@ -843,11 +840,14 @@
     formBody.style.height = bodyH + 30 + 'px';
     formBody.style.maxHeight = '150px';
     formBody.style.transform = 'translateY(-150px) translateZ(0)';
+    formBody.style.webkitTransform = 'translateY(-150px) translateZ(0)';
     window.setTimeout(function() {
       formBody.style.transition = 'all 500ms';
+      formBody.style.webkitTransition = 'all 500ms';
       formBody.style.maxHeight = bodyH + 30 + 'px';
-      formBody.style.transform = 'translateY(-' + 0 + 'px) translateZ(0)';
-    }, 218);
+      formBody.style.transform = 'translateY(0) translateZ(0)';
+      formBody.style.webkitTransform = 'translateY(0) translateZ(0)';
+    }, 50);
     formNode.style.height = bodyH + 180 + 'px';
   }
 

@@ -77,6 +77,10 @@
         }
         pageNode.style.display = 'block';
         if(views.pageNum !== undefined) {
+          if(views.pageNum > pageNum && pageNum !== 0) {
+            window.location.reload();
+          }
+
           if(pageNum === 1){
             setTimeout(function() {
               preparationAnimate();
@@ -387,8 +391,13 @@
           nextPage.style.display = 'block';
           addClass(nextPage, 'bounceInUp animated');
           eventHandler.oneHandler(currentPage, 'webkitAnimationEnd animationend', function() {
+            that.animate['page' + (num + 1) + 'animated'] = false;
+            if(that.animate['page' + num + 'animated']) {
+              return;
+            }
             window.location.hash = num + 1;
             removeClass(currentPage, 'fadeOutUp animated');
+            that.animate['page' + num + 'animated'] = true;
           });
         }else {
           return;
@@ -763,7 +772,7 @@
       setTimeout(animationDelayBind.call(null, currentNode) ,delay * x);
     }
     lastNode = arrayList[len - 1].ele;
-    // eventHandler.oneHandler(lastNode, 'webkitAnimationEnd animationend', function() {
+    eventHandler.oneHandler(lastNode, 'webkitAnimationEnd animationend', function() {
       setTimeout(function() {
         var pageNum = that.views.pageNum,
             pageNode= that.views.pageNode;
@@ -773,8 +782,8 @@
             that.animate.paging.call(null, pageNum)
           );
         }
-      }, 1000);
-    // });
+      }, 100);
+    });
   }
 
   function animationDelayBind(currentNode) {
@@ -1035,7 +1044,7 @@
         removeHandler = eventHandler.removeHandler;
     addHandler(element, type, function() {
       handler();
-      removeHandler(element, type);
+      removeHandler(element, type, handler);
     });
   };
 

@@ -17,3 +17,10 @@
 3. 数据计算由webworker完成  
   
 做之前没有考虑好这个项目的整体架构，完成度较高时重构代价又太大，只能先挖个坑，等以后有时间了再填。
+
+##How to  
+  
+  npm i  
+  bower i  
+  gulp  
+  gulp serve
